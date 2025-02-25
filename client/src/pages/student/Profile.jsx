@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+
+
 import {
   Dialog,
   DialogContent,
@@ -12,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, UserCircle, Mail, User, Users, Calendar, Info, Phone } from "lucide-react";
+import { Loader2,UserCircle,Mail,Users,Calendar,Info} from "lucide-react";
 import Course from "./Course";
 import { useGetUserDetailsQuery } from "@/features/api/authApi";
 
@@ -80,7 +82,7 @@ const Profile = () => {
               </div>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md transition-shadow">
+                  <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md transition-shadow dark:bg-white-400 rounded-full">
                     Edit Profile
                   </Button>
                 </DialogTrigger>
@@ -92,9 +94,9 @@ const Profile = () => {
                     </DialogDescription>
                   </DialogHeader>
                   
-                  <div className="grid gap-4 py-4">
+                  <div className="grid gap-4 py-4 text-white">
                     <div className="grid gap-2">
-                      <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                      <Label htmlFor="dateOfBirth" >Date of Birth</Label>
                       <Input id="dateOfBirth" name="dateOfBirth" type="date" />
                     </div>
                     

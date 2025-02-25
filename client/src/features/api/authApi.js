@@ -21,20 +21,27 @@ export const authApi = createApi({
         method: "POST",
         body: inputData,
       }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        try {
-          const result = await queryFulfilled;
-          dispatch(userLoggedIn({ user: result.data.user }));
-        } catch {
-          console.log("Error");
-        }
-      },
+      // async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+      //   try {
+      //     const result = await queryFulfilled;
+      //     dispatch(userLoggedIn({ user: result.data.user }));
+      //   } catch {
+      //     console.log("Error");
+      //   }
+      // },
     }),
-    logout: builder.mutation({
+    logoutUser: builder.mutation({
       query: () => ({
         url: "logout",
-        method: "POST",
+        method: "GET",
       }),
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
+        try {
+          dispatch(userLoggedOut());
+        } catch (error) {
+          console.log(error);
+        }
+      },
     }),
     getUserDetails: builder.query({
       query: () => ({
@@ -67,12 +74,13 @@ export const authApi = createApi({
     }),
   }),
 });
-console.log(authApi);
+// console.log(authApi);
 
 export const {
   useLoginUserMutation,
   useRegisterUserMutation,
   useGetUserDetailsQuery,
   useUploadDisplayImageMutation,
+  useLogoutUserMutation,
 } = authApi;
 // console.log(useRegisterMutation);

@@ -5,8 +5,7 @@ import {
   useLoginUserMutation,
   useRegisterUserMutation,
 } from "@/features/api/authApi";
-// console.log(useRegisterMutation);
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail, Lock, User, UserCircle, CheckCircle } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -64,189 +63,324 @@ const Login = () => {
       setLoginInput({ ...loginInput, [name]: value });
     }
   };
+  
   useEffect(() => {
     if (registerIsSuccess && registerData) {
-      toast.success(registerData.message) || "signup successful";
+      toast.success(registerData.message || "Signup successful");
       navigate("/");
     }
     if(registerError){
-      toast.error(registerData.data.message) || "signup failed";
+      toast.error(registerError?.data?.message || "Signup failed");
     }
     if(loginIsSuccess && loginData){
-      toast.success(loginData.message) || "login successful";
+      localStorage.setItem('user', JSON.stringify(loginData.user));
+      toast.success(loginData.message || "Login successful");
       navigate("/");
+      window.location.reload();
+      // setAuthState({ isAuthenticated: true, user: loginData.user });
     }
     if(loginError){
-      toast.error(loginData.data.message) || "login failed";
+      toast.error(loginError?.data?.message || "Login failed");
     }
   },
-  [loginIsLoading,registerIsLoading,loginData,registerData,loginError,registerError,loginIsSuccess,registerIsSuccess]);
+  [loginIsLoading, registerIsLoading, loginData, registerData, loginError, registerError, loginIsSuccess, registerIsSuccess, navigate]);
+
+  
 
   const handleSubmit = async (type) => {
     const inputData = type === "signup" ? signupInput : loginInput;
     const action = type === "signup" ? registerUser : loginUser;
     await action(inputData);
   };
+  
+  
 
   return (
-    <div className="flex w-full justify-center items-center mt-20">
-      <Tabs defaultValue="login" className="w-full max-w-md">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="login">Login</TabsTrigger>
-          <TabsTrigger value="signup">Signup</TabsTrigger>
-        </TabsList>
+    
+    <div className="flex w-full justify-center items-center min-h-[calc(100vh-6rem)] bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 px-4 pt-10">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Welcome to Edu-<span className="text-blue-600 dark:text-blue-400">Ma</span></h1>
+          <p className="text-gray-600 dark:text-gray-400">Your journey to knowledge begins here</p>
+        </div>
+        
+        <Tabs defaultValue="login" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-blue-100/50 dark:bg-gray-800 rounded-lg p-1">
+            <TabsTrigger 
+              value="login" 
+              className="rounded-md text-sm font-medium px-4 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-sm transition-all"
+            >
+              Login
+            </TabsTrigger>
+            <TabsTrigger 
+              value="signup" 
+              className="rounded-md text-sm font-medium px-4 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-sm transition-all"
+            >
+              Sign Up
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="login">
-          <Card>
-            <CardHeader>
-              <CardTitle>Login</CardTitle>
-              <CardDescription>Login to your account</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="login-email">Email</Label>
-                <Input
-                  id="login-email"
-                  name="email"
-                  type="email"
-                  value={loginInput.email}
-                  onChange={(e) => changeHandler(e, "login")}
-                  placeholder="xyz@gmail.com"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="login-password">Password</Label>
-                <Input
-                  id="login-password"
-                  name="password"
-                  type="password"
-                  value={loginInput.password}
-                  onChange={(e) => changeHandler(e, "login")}
-                  placeholder="Enter your password"
-                  required
-                />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button
-                className="w-full"
-                disabled={loginIsLoading}
-                onClick={() => handleSubmit("login")}
-              >
-                {loginIsLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Please wait
-                  </>
-                ) : (
-                  "Login"
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="signup">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sign Up</CardTitle>
-              <CardDescription>Create a new account</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="signup-firstName">firstName</Label>
-                <Input
-                  id="signup-firstName"
-                  name="firstName"
-                  value={signupInput.firstName}
-                  onChange={(e) => changeHandler(e, "signup")}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-lastName">lastName</Label>
-                <Input
-                  id="signup-lastName"
-                  name="lastName"
-                  value={signupInput.lastName}
-                  onChange={(e) => changeHandler(e, "signup")}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="signup-email">Email</Label>
-                <Input
-                  id="signup-email"
-                  name="email"
-                  type="email"
-                  value={signupInput.email}
-                  onChange={(e) => changeHandler(e, "signup")}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-password">Password</Label>
-                <Input
-                  id="signup-password"
-                  name="password"
-                  type="password"
-                  value={signupInput.password}
-                  onChange={(e) => changeHandler(e, "signup")}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-confirmPassword">Confirm Password</Label>
-                <Input
-                  id="signup-confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={signupInput.ConfirmPassword}
-                  onChange={(e) => changeHandler(e, "signup")}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-accountType">AccountType</Label>
-                <select
-                  id="signup-accountType"
-                  name="accountType"
-                  value={signupInput.accountType}
-                  onChange={(e) => changeHandler(e, "signup")}
-                  className="w-full px-3 py-2 border rounded-md"
+          <TabsContent value="login">
+            <Card className="border-none shadow-lg bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">Login</CardTitle>
+                <CardDescription className="text-center text-gray-500 dark:text-gray-400">Access your learning journey</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email" className="text-gray-700 dark:text-gray-300 font-medium">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="login-email"
+                      name="email"
+                      type="email"
+                      value={loginInput.email}
+                      onChange={(e) => changeHandler(e, "login")}
+                      placeholder="your.email@example.com"
+                      required
+                      className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <Label htmlFor="login-password" className="text-gray-700 dark:text-gray-300 font-medium">Password</Label>
+                    <a href="#" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">Forgot Password?</a>
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="login-password"
+                      name="password"
+                      type="password"
+                      value={loginInput.password}
+                      onChange={(e) => changeHandler(e, "login")}
+                      placeholder="••••••••"
+                      required
+                      className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col space-y-4 pt-2">
+                <Button
+                  className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors"
+                  disabled={loginIsLoading}
+                  onClick={() => handleSubmit("login")}
                 >
-                  <option value="Student">Student</option>
-                  <option value="Instructor">Instructor</option>
-                </select>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button
-                className="w-full"
-                disabled={registerIsLoading}
-                onClick={() => handleSubmit("signup")}
-              >
-                {registerIsLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Please wait
-                  </>
-                ) : (
-                  "Sign Up"
-                )}
-              </Button>
-              <button
-                className="w-full mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={signInWithGoogle}
-              >
-                Sign in with Google
-              </button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                  {loginIsLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Logging in...
+                    </>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
+                
+                <div className="relative w-full flex items-center gap-2 my-2">
+                  <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
+                  <span className="text-sm text-gray-400">or</span>
+                  <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
+                </div>
+                
+                <button
+                  className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 border border-gray-300 rounded-lg transition-colors"
+                  onClick={signInWithGoogle}
+                >
+                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                    <path
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      fill="#34A853"
+                    />
+                    <path
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      fill="#EA4335"
+                    />
+                  </svg>
+                  Sign in with Google
+                </button>
+                
+                <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+                  Don't have an account? 
+                  <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline ml-1">Sign up now</a>
+                </p>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="signup">
+            <Card className="border-none shadow-lg bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">Create an Account</CardTitle>
+                <CardDescription className="text-center text-gray-500 dark:text-gray-400">Join our learning community today</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-firstName" className="text-gray-700 dark:text-gray-300 font-medium">First Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                      <Input
+                        id="signup-firstName"
+                        name="firstName"
+                        value={signupInput.firstName}
+                        onChange={(e) => changeHandler(e, "signup")}
+                        placeholder="John"
+                        required
+                        className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-lastName" className="text-gray-700 dark:text-gray-300 font-medium">Last Name</Label>
+                    <Input
+                      id="signup-lastName"
+                      name="lastName"
+                      value={signupInput.lastName}
+                      onChange={(e) => changeHandler(e, "signup")}
+                      placeholder="Doe"
+                      required
+                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email" className="text-gray-700 dark:text-gray-300 font-medium">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="signup-email"
+                      name="email"
+                      type="email"
+                      value={signupInput.email}
+                      onChange={(e) => changeHandler(e, "signup")}
+                      placeholder="your.email@example.com"
+                      required
+                      className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password" className="text-gray-700 dark:text-gray-300 font-medium">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="signup-password"
+                      name="password"
+                      type="password"
+                      value={signupInput.password}
+                      onChange={(e) => changeHandler(e, "signup")}
+                      placeholder="••••••••"
+                      required
+                      className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-confirmPassword" className="text-gray-700 dark:text-gray-300 font-medium">Confirm Password</Label>
+                  <div className="relative">
+                    <CheckCircle className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="signup-confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      value={signupInput.confirmPassword}
+                      onChange={(e) => changeHandler(e, "signup")}
+                      placeholder="••••••••"
+                      required
+                      className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-accountType" className="text-gray-700 dark:text-gray-300 font-medium">Account Type</Label>
+                  <div className="relative">
+                    <UserCircle className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <select
+                      id="signup-accountType"
+                      name="accountType"
+                      value={signupInput.accountType}
+                      onChange={(e) => changeHandler(e, "signup")}
+                      className="w-full pl-10 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:text-gray-200 appearance-none"
+                    >
+                      <option value="Student">Student</option>
+                      <option value="Instructor">Instructor</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col space-y-4 pt-2">
+                <Button
+                  className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors"
+                  disabled={registerIsLoading}
+                  onClick={() => handleSubmit("signup")}
+                >
+                  {registerIsLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating account...
+                    </>
+                  ) : (
+                    "Create Account"
+                  )}
+                </Button>
+                
+                <div className="relative w-full flex items-center gap-2 my-2">
+                  <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
+                  <span className="text-sm text-gray-400">or</span>
+                  <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
+                </div>
+                
+                <button
+                  className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 border border-gray-300 rounded-lg transition-colors"
+                  onClick={signInWithGoogle}
+                >
+                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                    <path
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      fill="#34A853"
+                    />
+                    <path
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      fill="#EA4335"
+                    />
+                  </svg>
+                  Sign up with Google
+                </button>
+                
+                <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+                  Already have an account? 
+                  <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline ml-1">Login</a>
+                </p>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };

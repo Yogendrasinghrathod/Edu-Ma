@@ -136,7 +136,7 @@ exports.getAllUserDetails = async (req, res) => {
         success: true,
         message: "User Data fetched successfully",
         data: userDetails,
-        isLoading:false
+        
       })
     } catch (error) {
       return res.status(500).json({

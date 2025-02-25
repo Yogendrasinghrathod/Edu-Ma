@@ -210,7 +210,7 @@ const login = (req, res) => {
       
 
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: "24h",
+        expiresIn: "1h",
       });
 
       // Step 6 - Remove the password from the response
