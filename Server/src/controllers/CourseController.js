@@ -1,11 +1,14 @@
 const Course = require("../models/CourseSchema")
 const Category = require("../models/CategorySchema")
-// const Section = require("../models/Section")
-// const SubSection = require("../models/SubSection")
+const Section = require("../models/SectionSchema")
+const SubSection = require("../models/SubSectionSchema")
 const User = require("../models/UserSchema")
 const mongoose=require('mongoose') 
+const CourseProgress = require("../models/CourseProgressSchema")
 const { uploadImageToCloudinary } = require("../utils/imageUploader")
-const { upload } = require("../utils/imageUploader"); // Ensure correct path
+const { upload } = require("../utils/imageUploader"); 
+mailSender = require("../utils/mailSender") 
+const{courseEnrollmentEmail}=require("../mail/courseEnrollmentEmail")
 
 // const CourseProgress = require("../models/CourseProgress")
 // const { convertSecondsToDuration } = require("../utils/secToDuration")
@@ -207,6 +210,13 @@ exports.editCourse = async (req, res) => {
         },
       })
       .populate("category")
+      .populate("ratingAndReviews")
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      })
       .exec();
 
     res.json({
@@ -280,13 +290,13 @@ exports.getAllCourses = async (req, res) => {
           },
         })
         .populate("category")
-        // .populate("ratingAndReviews")
-        // .populate({
-        //   path: "courseContent",
-        //   populate: {
-        //     path: "subSection",
-        //   },
-        // })
+        .populate("ratingAndReviews")
+        .populate({
+          path: "courseContent",
+          populate: {
+            path: "subSection",
+          },
+        })
         .exec()
 
       console.log(courseDetails)
@@ -333,19 +343,19 @@ exports.getFullCourseDetails = async (req, res) => {
         },
       })
       .populate("category")
-      // .populate("ratingAndReviews")
-      // .populate({
-      //   path: "courseContent",
-      //   populate: {
-      //     path: "subSection",
-      //   },
-      // })
+      .populate("ratingAndReviews")
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      })
       .exec()
 
-    // let courseProgressCount = await CourseProgress.findOne({
-    //   courseID: courseId,
-    //   userId: userId,
-    // })
+    let courseProgressCount = await CourseProgress.findOne({
+      courseID: courseId,
+      userId: userId,
+    })
 
     // console.log("courseProgressCount : ", courseProgressCount)
 
@@ -467,3 +477,67 @@ exports.deleteCourse = async (req, res) => {
     })
   }
 }
+
+exports.enrollStudents = async (req ,res) => {
+  const{courses}=req.body
+  const userId=req.user.id
+  console.log(courses)
+  if (!courses || !userId) {
+    console.log('Missing courses or userId');
+    return res.status(400).json({ success: false, message: 'Please Provide Course ID and User ID' });
+  }
+
+  try {
+    for (const courseId of courses) {
+      console.log('Enrolling user in course:', courseId);
+      const enrolledCourse = await Course.findOneAndUpdate(
+        { _id: courseId },
+        { $push: { studentsEnrolled: userId } },
+        { new: true }
+      );
+
+      if (!enrolledCourse) {
+        console.log('Course not found:', courseId);
+        return res.status(404).json({ success: false, error: 'Course not found' });
+      }
+
+      // console.log('Creating course progress for user:', userId);
+      const courseProgress = await CourseProgress.create({
+        courseID: courseId,
+        userId: userId,
+        completedVideos: [],
+      });
+
+      console.log('Updating user with enrolled course and progress:', userId);
+      const enrolledStudent = await User.findByIdAndUpdate(
+        userId,
+        {
+          $push: {
+            courses: courseId,
+            courseProgress: courseProgress._id,
+          },
+        },
+        { new: true }
+      );
+
+      console.log(enrolledStudent);
+      await mailSender(
+        enrolledStudent.email,
+        `Successfully Enrolled into ${enrolledCourse.courseName}`,
+        courseEnrollmentEmail(
+          enrolledCourse.courseName,
+          `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
+        )
+      );
+
+      console.log('Enrolled student:', enrolledStudent);
+    }
+    console.log('Students enrolled successfully');
+    res.json({ success: true, message: 'Students enrolled successfully' });
+  } catch (error) {
+    console.error('Error in enrollStudents:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// console.log("CourseProgress:", CourseProgressSchema);
