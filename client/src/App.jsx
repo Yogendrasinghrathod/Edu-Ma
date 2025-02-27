@@ -1,8 +1,8 @@
 import "./App.css";
 // import {Button} from './components/ui/button'
 import Login from "./pages/login";
-import Navbar from "./components/navbar";
-import HeroSection from "./pages/student/heroSection";
+// import Navbar from "./components/Navbar";
+import HeroSection from "./pages/student/HeroSection";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
 import Courses from "./pages/student/Courses";
