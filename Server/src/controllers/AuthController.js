@@ -1,11 +1,10 @@
 const User = require("../models/UserSchema");
 
-
 const Profile = require("../models/ProfileSchema");
 const bcrypt = require("bcrypt");
-const mailSender=require('../utils/mailSender')
+const mailSender = require("../utils/mailSender");
 const jwt = require("jsonwebtoken");
-require('dotenv').config();
+require("dotenv").config();
 
 // import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
@@ -40,24 +39,21 @@ require('dotenv').config();
 //   }
 // };
 
- const logout =async(req,res)=>{
-  try{
-    return res.status(200).cookie("token","",{maxAge:0}).json({
-      msg:"Logged out successfully",
-      success:true
-    })
-
-  }
-  catch(error){ 
+const logout = async (req, res) => {
+  try {
+    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+      msg: "Logged out successfully",
+      success: true,
+    });
+  } catch (error) {
     console.error("Error in logout:", error);
     return res.status(500).json({
       success: false,
       message: "Logout failed. Please try again.",
-      error: error.message
+      error: error.message,
     });
   }
-}
-
+};
 
 // Signup
 const signup = async (req, res) => {
@@ -70,7 +66,6 @@ const signup = async (req, res) => {
       password,
       confirmPassword,
       accountType,
-      
     } = req.body;
 
     // console.log(req.body);
@@ -79,70 +74,60 @@ const signup = async (req, res) => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "All required fields must be filled"
+        message: "All required fields must be filled",
       });
     }
-    
-
-
-    
 
     // Step 3 - Match passwords
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "Password and Confirm Password do not match"
+        message: "Password and Confirm Password do not match",
       });
     }
-    
 
     // Step 4 - Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       // console.log("User exist");
-      
+
       return res.status(400).json({
         success: false,
-        message: "User is already registered. Please login to continue"
-        
+        message: "User is already registered. Please login to continue",
       });
     }
-    
 
     // Step 5 - Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     // console.log(hashedPassword);
 
     // Step 6 - Create a profile
     const profileDetails = await Profile.create({
-      gender:null,
-      dateOfBirth:null,
-      about:null,
-      contactNumber:`temp_${Date.now()}`,
+      gender: null,
+      dateOfBirth: null,
+      about: null,
+      contactNumber: `temp_${Date.now()}`,
     });
     // console.log(profileDetails);
 
     // console.log(accountType)
 
-
     // console.log("Received Data:", req.body);
-
 
     // Step 7 - Create the user
     // console.log("Creating user...");
-    
-      const user = await User.create({
-        firstName,
-        lastName,
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        accountType,
-        approved: accountType === "Instructor" ? false : true,
-        additionalDetails: profileDetails._id,
-        image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
-      });
-  
+
+    const user = await User.create({
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      accountType,
+      approved: accountType === "Instructor" ? false : true,
+      additionalDetails: profileDetails._id,
+      image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
+    });
 
     // Remove password from response
     user.password = undefined;
@@ -151,139 +136,130 @@ const signup = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user
+      user,
     });
-
   } catch (error) {
     // console.error("Error in signup:", error);
     return res.status(500).json({
       success: false,
       message: "User registration failed. Please try again.",
-      error: error.message
+      error: error.message,
     });
   }
-}
+};
 
-// Login
-const login = (req, res) => {
-  // Step 1 - Fetch the data
-  const { email, password } = req.body;
+const login = async (req, res) => {
+  try {
+    // Step 1 - Fetch the data
+    const { email, password } = req.body;
 
-  // Step 2 - Validate the data
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "All fields are required",
+    // Step 2 - Validate the data
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide both email and password",
+      });
+    }
+
+    // Step 3 - Check if the user exists
+    const user = await User.findOne({ email }).populate("additionalDetails");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "The user account does not exist. Please signup.",
+      });
+    }
+
+    // Step 4 - Verify the password
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    // Step 5 - Generate the JWT token
+    const payload = {
+      email: user.email,
+      id: user._id,
+      role: user.accountType,
+    };
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal Server Error: JWT Secret not found",
+      });
+    }
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
-  }
 
-  // Step 3 - Check if the user exists
-  User.findOne({ email:email })
-    .populate("additionalDetails")
-    .then((user) => {
-      if (!user) {
-        return Promise.reject({
-          status: 404,
-          message: "The user account does not exist. Please signup.",
-        });
-      }
+    // Step 6 - Remove the password from the response
+    user.password = undefined;
 
-      // Step 4 - Verify the password
-      return bcrypt.compare(password, user.password).then((isPasswordCorrect) => {
-        if (!isPasswordCorrect) {
-          return Promise.reject({
-            status: 401,
-            message: "Password is incorrect",
-          });
-        }
-        
-        return user;
-      });
-    })
-    .then((user) => {
-      // Step 5 - Generate the JWT token
-      const payload = {
-        email: user.email,
-        id: user._id,
-        role: user.accountType,
-      };
-      
-
-      const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-
-      // Step 6 - Remove the password from the response
-      user.password = undefined;
-
-      // Step 7 - Set cookie options
-      const options = {
-        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    // Step 7 - Return the response
+    return res
+      .cookie("token", token, {
         httpOnly: true,
-      };
-
-      // Step 8 - Return the response
-      return res.cookie("token", token, options).status(200).json({
+        secure: process.env.NODE_ENV === "production", // Only secure in production
+        sameSite: "Strict",
+        maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
+      })
+      .status(200)
+      .json({
         success: true,
         token,
         user,
         message: "User logged in successfully",
       });
-    })
-    .catch((error) => {
-      if (error.status) {
-        return res.status(error.status).json({
-          success: false,
-          message: error.message,
-        });
-      }
-      console.error(error);
-      return res.status(500).json({
-        success: false,
-        message: "Login failed. Please try again.",
-        
-      });
+  } catch (error) {
+    console.error("Login Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Login failed. Please try again.",
     });
+  }
 };
 
+module.exports = { login };
 
 //change Password
-
 
 const changePassword = (req, res) => {
   // Find user by ID
   User.findById(req.user.id)
     .then((userDetails) => {
       if (!userDetails) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
-      
+
       // Extract oldPassword and newPassword from req.body
       const { oldPassword, newPassword } = req.body;
 
       // Validate old password
-      return bcrypt.compare(oldPassword, userDetails.password)
+      return bcrypt
+        .compare(oldPassword, userDetails.password)
 
         .then((isPasswordMatch) => {
-         
           if (!isPasswordMatch) {
-            res.status(401).json({ 
-              success: false, 
-              message: "The password is incorrect" 
+            res.status(401).json({
+              success: false,
+              message: "The password is incorrect",
             });
-            return Promise.reject('Password incorrect');
-            
+            return Promise.reject("Password incorrect");
           }
 
           // Encrypt the new password
-          return bcrypt.hash(newPassword, 10)
-            .then((encryptedPassword) => {
-              return User.findByIdAndUpdate(
-                req.user.id,
-                { password: encryptedPassword },
-                { new: true }
-              );
-            });
+          return bcrypt.hash(newPassword, 10).then((encryptedPassword) => {
+            return User.findByIdAndUpdate(
+              req.user.id,
+              { password: encryptedPassword },
+              { new: true }
+            );
+          });
         });
     })
     .then((updatedUserDetails) => {
@@ -297,11 +273,11 @@ const changePassword = (req, res) => {
         "Password for your account has been updated",
         `Password updated successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`
       )
-      .then((emailResponse) => {
+        .then((emailResponse) => {
           console.log("Email sent successfully:", emailResponse.response);
-          res.status(200).json({ 
-            success: true, 
-            message: "Password updated successfully" 
+          res.status(200).json({
+            success: true,
+            message: "Password updated successfully",
           });
         })
         .catch((error) => {
@@ -309,7 +285,7 @@ const changePassword = (req, res) => {
           res.status(500).json({
             success: false,
             message: "Error occurred while sending email",
-            error: error.message
+            error: error.message,
           });
         });
     })
@@ -320,10 +296,10 @@ const changePassword = (req, res) => {
         res.status(500).json({
           success: false,
           message: "Error occurred while updating the password",
-          error: error.message
+          error: error.message,
         });
       }
     });
 };
 
-module.exports = { signup, login, changePassword ,logout};
+module.exports = { signup, login, changePassword, logout };

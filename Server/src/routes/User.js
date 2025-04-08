@@ -12,7 +12,7 @@ const { auth, isAdmin, isInstructor, isStudent } = require("../middlewares/middl
 router.post("/login", login);    // Route for login
 router.post("/signup", signup);  // Route for signup
 router.post("/changePassword",auth, changePassword)   //route to change password
-router.post("/logout",auth, logout)  //route for logout
+router.post("/logout",logout)  //route for logout
 
 router.post("/reset-password-token", resetPasswordToken) //route for restPasswordToken
 router.post("/reset-password", resetPassword)  //Route for reset password
