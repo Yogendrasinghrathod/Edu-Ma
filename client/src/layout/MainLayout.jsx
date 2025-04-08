@@ -1,5 +1,5 @@
 import React from 'react'
-import NavBar from '../components/NavBar'
+import Navbar from '../components/Navbar'
 
 import {  Outlet } from 'react-router-dom'
 
@@ -8,7 +8,7 @@ import {  Outlet } from 'react-router-dom'
 function MainLayout() {
   return (
     <div>
-        <NavBar />
+        <Navbar />
         <div>
             <Outlet />
         </div>

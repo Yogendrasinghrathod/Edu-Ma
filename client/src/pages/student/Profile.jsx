@@ -86,16 +86,16 @@ const Profile = () => {
                     Edit Profile
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[425px] text-black">
                   <DialogHeader>
                     <DialogTitle>Edit Profile</DialogTitle>
-                    <DialogDescription>
-                      Update your profile information here. Click save when you're done.
+                    <DialogDescription className="text-lg content-center text-gray-500"> 
+                      Update your profile
                     </DialogDescription>
                   </DialogHeader>
                   
-                  <div className="grid gap-4 py-4 text-white">
-                    <div className="grid gap-2">
+                  <div className="grid gap-4 py-4 text-gray-950 dark:text-gray-200">
+                    <div className="grid gap-2 ">
                       <Label htmlFor="dateOfBirth" >Date of Birth</Label>
                       <Input id="dateOfBirth" name="dateOfBirth" type="date" />
                     </div>
@@ -107,7 +107,7 @@ const Profile = () => {
                     
                     <div className="grid gap-2">
                       <Label htmlFor="contactNumber">Contact Number</Label>
-                      <Input id="contactNumber" name="contactNumber" type="tel" placeholder="Your phone number" />
+                      <Input id="contactNumber" name="contactNumber" className="text-gray-950"type="tel" placeholder="Your phone number" />
                     </div>
                     
                     <div className="grid gap-2">
@@ -115,7 +115,7 @@ const Profile = () => {
                       <select
                         id="gender"
                         name="gender"
-                        className="w-full rounded-md border border-input bg-transparent px-3 py-2"
+                        className="w-full rounded-md  dark:text-gray-300 border border-input bg-transparent px-3 py-2"
                       >
                         <option value="male">Male</option>
                         <option value="female">Female</option>
