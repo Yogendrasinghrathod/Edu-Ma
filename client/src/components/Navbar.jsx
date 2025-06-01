@@ -33,77 +33,51 @@ import {
 } from "./ui/sheet";
 
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useLogoutUserMutation } from "@/features/api/authApi";
+import { toast } from "sonner";
+import { useSelector } from "react-redux";
+import store from "@/app/store";
 // import { Toaster } from "./ui/sonner";
+import { useLocation } from 'react-router-dom';
 
-function Navbar() {
-  // const { user,isAuthenticated } = useSelector((store) => store.auth);
-  const user = true;
-  const [localUser, setLocalUser] = useState(null);
+const Navbar=()=>{
+  const {user}=useSelector(store=>store.auth);
+  
+  const navigate = useNavigate();
+
+  const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
+
+  const logoutHandler = async () => {
+    await logoutUser();
+  };
 
   useEffect(() => {
-    // Check localStorage for user if Redux state is empty
-    if (!user) {
-      const storedUser = localStorage.getItem("user");
-      // console.log("User is:",storedUser);
-      if (storedUser) {
-        setLocalUser(JSON.parse(storedUser));
-      }
+    if (isSuccess) {
+      toast.success(data.message || "User Logged out successfully");
+      navigate("/login");
     }
-  }, [user]);
+  }, [isSuccess]);
+  const location = useLocation();
 
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  // Add scroll listener for glass effect
-  React.useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  
 
   return (
-    <div
-      className={`h-16 fixed top-0 left-0 right-0 duration-300 z-10 ${
-        isScrolled
-          ? "dark:bg-black/80 bg-white/80 backdrop-blur-md shadow-md"
-          : "dark:bg-[#0A0A0A] bg-white border-b dark:border-b-gray-800 border-b-gray-200"
-      }`}
+    <div 
+      className={location.pathname === "/login"?`h-16 fixed top-0 left-0 right-0 duration-300 z-10 dark:bg-gray-600  bg-transparent hover:bg-[#1E40AF] text-white  backdrop-blur-md shadow-md`:`h-16 fixed top-0 left-0 right-0 duration-300 z-10 dark:bg-gray-600 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white  backdrop-blur-md shadow-md`}
     >
       {/* desktop */}
       <div className="max-w-7xl mx-auto h-full hidden md:flex items-center justify-between px-6">
         <div className="flex items-center gap-2 hover:scale-105 transition-transform">
           <Link to="/" className="group">
-            <h1 className="hidden md:block font-extrabold text-2xl dark:text-blue-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h1 className={location.pathname === "/login"? "hidden md:block font-extrabold text-2xl dark:text-blue-200 group-hover:text-blue-600 text-blue-600 dark:group-hover:text-blue-400 transition-colors":"hidden md:block font-extrabold text-2xl dark:text-blue-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"}>
               Edu-<span className="text-blue-600 dark:text-blue-400">Ma</span>
             </h1>
           </Link>
         </div>
 
         {/* Navigation Links - Added for better UX */}
-        <div className="flex items-center space-x-6">
-          <Link
-            to="/courses"
-            className="font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
-          >
-            <Compass size={18} />
-            <span>Explore</span>
-          </Link>
-          <Link
-            to="/myLearning"
-            className="font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
-          >
-            <BookOpen size={18} />
-            <span>My Learning</span>
-          </Link>
-        </div>
+        
 
         {/* userIcon and dark mode */}
         <div className="flex items-center gap-4">
@@ -111,7 +85,7 @@ function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer border-2 border-blue-500 hover:border-blue-400 hover:shadow-md hover:shadow-blue-300/20 transition-all">
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarImage src={user.profilePhoto ||"https://github.com/shadcn.png"} />
                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white">
                     ED
                   </AvatarFallback>
@@ -137,14 +111,12 @@ function Navbar() {
                     </Link>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem className="rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/50 cursor-pointer p-2 my-1">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <Link to="logout" className="flex-1">
-                      Logout
-                    </Link>
+                  <DropdownMenuItem onClick={logoutHandler}>
+                    Log out
                   </DropdownMenuItem>
+                  
                 </DropdownMenuGroup>
-                {user?.role === "instructor" && (
+                {user?.accountType === "Instructor" && (
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
@@ -160,11 +132,9 @@ function Navbar() {
                 variant="outline"
                 className="rounded-full border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 px-6"
               >
-                <Link to="/login">Login</Link>
+                <Link to="/login">Login/SignUp</Link>
               </Button>
-              <Button className="rounded-full border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-300 px-6">
-                <Link to="/login">Sign Up</Link>
-              </Button>
+              
             </div>
           )}
           <div className="p-1 rounded-full bg-gray-100 dark:bg-gray-800">
@@ -243,6 +213,7 @@ const MobileNavbar = () => {
             <span className="font-medium">Edit Profile</span>
           </Link>
           <Link
+            
             to="/logout"
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
           >

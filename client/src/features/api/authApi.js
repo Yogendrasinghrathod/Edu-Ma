@@ -1,69 +1,79 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-// import { userLoggedIn } from "../authSlice";
+import { userLoggedIn, userLoggedOut } from "../authSlice";
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5001/api/v1/auth",
+    baseUrl: "http://localhost:5001/api/v1",
     credentials: "include",
   }),
   endpoints: (builder) => ({
     loginUser: builder.mutation({
       query: (inputData) => ({
-        url: "/login",
+        url: "/auth/login",
         method: "POST",
         body: inputData,
       }),
+      async onQueryStarted(_,{queryFulfilled,dispatch}){
+        try{
+          const result=await queryFulfilled;
+          dispatch(userLoggedIn({user:result.data.user}));
+        }
+        catch(error){
+          console.log(error);
+        }
+      }
     }),
     registerUser: builder.mutation({
       query: (inputData) => ({
-        url: "/signup",
+        url: "/auth/signup",
         method: "POST",
         body: inputData,
       }),
-      // async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-      //   try {
-      //     const result = await queryFulfilled;
-      //     dispatch(userLoggedIn({ user: result.data.user }));
-      //   } catch {
-      //     console.log("Error");
-      //   }
-      // },
+      
     }),
+
     logoutUser: builder.mutation({
       query: () => ({
-        url: "logout",
+        url: "/auth/logout",
+        method: "POST",
+      }),
+      async onQueryStarted(_,{queryFulfilled,dispatch}){
+        try{
+          
+          dispatch(userLoggedOut());
+        }
+        catch(error){
+          console.log(error);
+        }
+      }
+    }),
+
+    loadUser: builder.query({
+      query: () => ({
+        url: "/profile",
         method: "GET",
       }),
+      async onQueryStarted(_,{queryFulfilled,dispatch}){
+        try{
+          const result=await queryFulfilled;
+          dispatch(userLoggedIn({user:result.data.user}));
+        }
+        catch(error){
+          console.log(error);
+        }
+      }
     }),
-    getUserDetails: builder.query({
-      query: () => ({
-        url: "getUserDetails",
-        method: "GET",
-      }),
-    }),
-    uploadDisplayImage: builder.mutation({
-      query: () => ({
-        url: "updateDisplayPicture",
+
+    updateUser: builder.mutation({
+      query: (formData) => ({
+        url: "/profile/update",
         method: "PUT",
         body: formData,
+        headers:{},
+        credentials:"include"
       }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        try {
-          const result = await queryFulfilled;
-          dispatch(
-            authApi.util.updateQueryData(
-              "getUserDetails",
-              undefined,
-              (draft) => {
-                draft.user.displayPicture = result.data.displayPicture;
-              }
-            )
-          );
-        } catch {
-          console.log("Upload failed");
-        }
-      },
+      
     }),
   }),
 });
@@ -72,8 +82,8 @@ export const authApi = createApi({
 export const {
   useLoginUserMutation,
   useRegisterUserMutation,
-  useGetUserDetailsQuery,
-  useUploadDisplayImageMutation,
+  useLoadUserQuery,
+  useUpdateUserMutation, 
   useLogoutUserMutation,
 } = authApi;
 // console.log(useRegisterMutation);

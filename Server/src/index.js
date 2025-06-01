@@ -5,13 +5,13 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 const database = require("./config/database");
 
-const fileUpload = require("express-fileupload");
+// const fileUpload = require("express-fileupload");
 
-app.use(fileUpload({
-    useTempFiles: true, 
-    tempFileDir: "/src/images/"
-}));
-app.use(express.urlencoded({ extended: true }));
+// app.use(fileUpload({
+//     useTempFiles: true, 
+//     tempFileDir: "/src/images/"
+// }));
+// app.use(express.urlencoded({ extended: false}));
 
 const cors = require('cors');
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
@@ -28,6 +28,7 @@ const PORT = process.env.PORT || 4000;
 const authRoutes = require("./routes/User");
 const profileRoute=require("./routes/Profile");
 const courseRoute=require('./routes/Course');
+const mediaRoute=require('./routes/MediaRoute')
 
 app.use(express.json());
 
@@ -35,6 +36,8 @@ app.use("/api/v1/auth", authRoutes);
 
 app.use("/api/v1",profileRoute);
 app.use("/api/v1",courseRoute);
+
+app.use("/api/v1/media",mediaRoute)
 
 
 //default request

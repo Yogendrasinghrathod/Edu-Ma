@@ -1,12 +1,13 @@
 import React from "react";
 import Course from "./Course";
 import { BookOpen, Search, GraduationCap, FolderHeart } from "lucide-react";
-import { useGetUserDetailsQuery } from "../../features/api/authApi";
+import {  useLoadUserQuery } from "../../features/api/authApi";
 
 
 const MyLearning = () => {
-  const {data, isLoading} = useGetUserDetailsQuery();
-  console.log(data);
+  const {data,isLoading} = useLoadUserQuery()
+  // const isLoading=true;
+  // console.log(data);
   const myLearningCourses = [1,2];
 
   return (
@@ -42,8 +43,8 @@ const MyLearning = () => {
       <div className="my-5">
         {isLoading ? (
           <MyLearningSkeleton />
-        ) : myLearningCourses.length === 0 ? (
-          <EmptyState />
+        ) : myLearningCourses.length === 0 ? (     
+          <p>You are not enrolled in course</p>
         ) : (
           <>
             {/* Progress Summary */}

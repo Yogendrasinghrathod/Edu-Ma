@@ -8,21 +8,15 @@ const {
   deleteAccount,
   updateProfile,
   getAllUserDetails,
-  updateDisplayPicture,
-  getEnrolledCourses,
-  instructorDashboard,
 } = require("../controllers/profileController")
+const upload = require("../utils/multer");
 
-//********************************************************************************************************
-//Profile route// ********************************************************************************************************
 
-// Delete User Account
-router.delete("/deleteProfile", auth, deleteAccount)
-router.put("/updateProfile", auth, updateProfile)
-router.get("/auth/getUserDetails", auth, getAllUserDetails)
-// Get Enrolled Courses
-router.get("/getEnrolledCourses", auth, getEnrolledCourses)
-router.put("/updateDisplayPicture", auth, updateDisplayPicture)
-router.get("/instructorDashboard", auth, isInstructor, instructorDashboard)
+
+// router.delete("/deleteProfile", auth, deleteAccount)
+router.put("/profile/update", auth, upload.single("profilePhoto"),updateProfile)
+router.get("/profile", auth, getAllUserDetails)
+
+
 
 module.exports = router;

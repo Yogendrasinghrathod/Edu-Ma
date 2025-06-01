@@ -1,7 +1,8 @@
 const User = require("../models/UserSchema");
 
-const Profile = require("../models/ProfileSchema");
-const bcrypt = require("bcrypt");
+// const Profile = require("../models/ProfileSchema");
+const bcrypt = require("bcryptjs");
+
 const mailSender = require("../utils/mailSender");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -16,7 +17,7 @@ require("dotenv").config();
 //     const result = await signInWithPopup(auth, provider);
 //     const idToken = await result.user.getIdToken(); // Firebase ID Token
 
-//     const [firstName, lastName] = result.user.displayName.split(" ");
+//     const [name] = result.user.displayName;
 
 //     await fetch("http://localhost:5000/api/signup", {
 //       method: "POST",
@@ -25,8 +26,7 @@ require("dotenv").config();
 //         Authorization: `Bearer ${idToken}`, // Send token for verification
 //       },
 //       body: JSON.stringify({
-//         firstName,
-//         lastName,
+//         name,
 //         email: result.user.email,
 //         image: result.user.photoURL,
 //         accountType: "Student", // Change based on user selection
@@ -46,7 +46,7 @@ const logout = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error("Error in logout:", error);
+    // console.error("Error in logout:", error);
     return res.status(500).json({
       success: false,
       message: "Logout failed. Please try again.",
@@ -58,27 +58,23 @@ const logout = async (req, res) => {
 // Signup
 const signup = async (req, res) => {
   try {
-    // Step 1 - Fetch data from request body
+   
     const {
-      firstName,
-      lastName,
+      name,
       email,
       password,
       confirmPassword,
       accountType,
     } = req.body;
 
-    // console.log(req.body);
-
-    // Step 2 - Validate required fields
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword) {
       return res.status(400).json({
         success: false,
         message: "All required fields must be filled",
       });
     }
 
-    // Step 3 - Match passwords
+ 
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
@@ -86,10 +82,9 @@ const signup = async (req, res) => {
       });
     }
 
-    // Step 4 - Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      // console.log("User exist");
+  
 
       return res.status(400).json({
         success: false,
@@ -97,49 +92,28 @@ const signup = async (req, res) => {
       });
     }
 
-    // Step 5 - Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // console.log(hashedPassword);
-
-    // Step 6 - Create a profile
-    const profileDetails = await Profile.create({
-      gender: null,
-      dateOfBirth: null,
-      about: null,
-      contactNumber: `temp_${Date.now()}`,
-    });
-    // console.log(profileDetails);
-
-    // console.log(accountType)
-
-    // console.log("Received Data:", req.body);
-
-    // Step 7 - Create the user
-    // console.log("Creating user...");
 
     const user = await User.create({
-      firstName,
-      lastName,
+      name,
       email: email.toLowerCase(),
       password: hashedPassword,
-      accountType,
-      approved: accountType === "Instructor" ? false : true,
-      additionalDetails: profileDetails._id,
-      image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
+      accountType, 
+      profilePhoto: `https://api.dicebear.com/5.x/initials/svg?seed=${name}`,
     });
 
-    // Remove password from response
+  
     user.password = undefined;
 
-    // Step 8 - Return success response
+
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
       user,
     });
   } catch (error) {
-    // console.error("Error in signup:", error);
+    
     return res.status(500).json({
       success: false,
       message: "User registration failed. Please try again.",
@@ -150,10 +124,10 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    // Step 1 - Fetch the data
+  
     const { email, password } = req.body;
 
-    // Step 2 - Validate the data
+   
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -161,8 +135,8 @@ const login = async (req, res) => {
       });
     }
 
-    // Step 3 - Check if the user exists
-    const user = await User.findOne({ email }).populate("additionalDetails");
+
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -170,7 +144,7 @@ const login = async (req, res) => {
       });
     }
 
-    // Step 4 - Verify the password
+    
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(401).json({
@@ -179,12 +153,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Step 5 - Generate the JWT token
-    const payload = {
-      email: user.email,
-      id: user._id,
-      role: user.accountType,
-    };
 
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({
@@ -193,20 +161,25 @@ const login = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+    console.log(token)
 
-    // Step 6 - Remove the password from the response
     user.password = undefined;
 
-    // Step 7 - Return the response
     return res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Only secure in production
-        sameSite: "Strict",
-        maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
+        secure: true, // Only secure in production
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 3 days
       })
       .status(200)
       .json({

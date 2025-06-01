@@ -2,23 +2,28 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
+ "type": "commonjs",
+
   "scripts": {
-    "start": "nodemon ./src/index",
+    "start": "npx kill-port 5001 && nodemon ./src/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  
+  
+
+
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "express-fileupload": "^1.5.1",
     "express-validator": "^7.2.1",
     "firebase-admin": "^13.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -28,6 +33,7 @@
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
+    "kill-port": "^2.0.1",
     "nodemon": "^3.1.9"
   }
 }

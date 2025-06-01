@@ -5,7 +5,14 @@ import {
   useLoginUserMutation,
   useRegisterUserMutation,
 } from "@/features/api/authApi";
-import { Loader2, Mail, Lock, User, UserCircle, CheckCircle } from "lucide-react";
+import {
+  Loader2,
+  Mail,
+  Lock,
+  User,
+  UserCircle,
+  CheckCircle,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -20,16 +27,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-
-
 const Login = () => {
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
   });
   const [signupInput, setSignupInput] = useState({
-    firstName: "",
-    lastName: "",
+    name:"",
     email: "",
     password: "",
     confirmPassword: "",
@@ -65,57 +69,66 @@ const Login = () => {
       setLoginInput({ ...loginInput, [name]: value });
     }
   };
-  
+
   useEffect(() => {
     if (registerIsSuccess && registerData) {
       toast.success(registerData.message || "Signup successful");
       navigate("/");
     }
-    if(registerError){
+    if (registerError) {
       toast.error(registerError?.data?.message || "Signup failed");
     }
-    if(loginIsSuccess && loginData){
-      localStorage.setItem('user', JSON.stringify(loginData.user));
+    if (loginIsSuccess && loginData) {
+      localStorage.setItem("user", JSON.stringify(loginData.user));
       toast.success(loginData.message || "Login successful");
       navigate("/");
       window.location.reload();
       // setAuthState({ isAuthenticated: true, user: loginData.user });
     }
-    if(loginError){
+    if (loginError) {
       toast.error(loginError?.data?.message || "Login failed");
     }
-  },
-  [loginIsLoading, registerIsLoading, loginData, registerData, loginError, registerError, loginIsSuccess, registerIsSuccess, navigate]);
-
-  
+  }, [
+    loginIsLoading,
+    registerIsLoading,
+    loginData,
+    registerData,
+    loginError,
+    registerError,
+    loginIsSuccess,
+    registerIsSuccess,
+    navigate,
+  ]);
 
   const handleSubmit = async (type) => {
     const inputData = type === "signup" ? signupInput : loginInput;
     const action = type === "signup" ? registerUser : loginUser;
     await action(inputData);
   };
-  
-  
 
   return (
-    
     <div className="flex w-full justify-center items-center min-h-[calc(100vh-6rem)] bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 px-4 pt-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Welcome to Edu-<span className="text-blue-600 dark:text-blue-400">Ma</span></h1>
-          <p className="text-gray-600 dark:text-gray-400">Your journey to knowledge begins here</p>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+            Welcome to Edu-
+            <span className="text-blue-600 dark:text-blue-400">Ma</span>
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Your journey to knowledge begins here
+          </p>
         </div>
-        
+
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6 bg-blue-100/50 dark:bg-gray-800 rounded-lg p-1">
-            <TabsTrigger 
-              value="login" 
+            <TabsTrigger
+              value="login"
               className="rounded-md text-sm font-medium px-4 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-sm transition-all"
             >
               Login
             </TabsTrigger>
-            <TabsTrigger 
-              value="signup" 
+            <TabsTrigger
+              value="signup"
               className="rounded-md text-sm font-medium px-4 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-sm transition-all"
             >
               Sign Up
@@ -125,12 +138,21 @@ const Login = () => {
           <TabsContent value="login">
             <Card className="border-none shadow-lg bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
               <CardHeader className="pb-2">
-                <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">Login</CardTitle>
-                <CardDescription className="text-center text-gray-500 dark:text-gray-400">Access your learning journey</CardDescription>
+                <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+                  Login
+                </CardTitle>
+                <CardDescription className="text-center text-gray-500 dark:text-gray-400">
+                  Access your learning journey
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-gray-700 dark:text-gray-300 font-medium">Email</Label>
+                  <Label
+                    htmlFor="login-email"
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Email
+                  </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
@@ -147,8 +169,18 @@ const Login = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <Label htmlFor="login-password" className="text-gray-700 dark:text-gray-300 font-medium">Password</Label>
-                    <a href="#" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">Forgot Password?</a>
+                    <Label
+                      htmlFor="login-password"
+                      className="text-gray-700 dark:text-gray-300 font-medium"
+                    >
+                      Password
+                    </Label>
+                    <a
+                      href="#"
+                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      Forgot Password?
+                    </a>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -180,13 +212,13 @@ const Login = () => {
                     "Login"
                   )}
                 </Button>
-                
+
                 <div className="relative w-full flex items-center gap-2 my-2">
                   <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
                   <span className="text-sm text-gray-400">or</span>
                   <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
                 </div>
-                
+
                 <button
                   className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 border border-gray-300 rounded-lg transition-colors"
                   onClick={signInWithGoogle}
@@ -211,10 +243,15 @@ const Login = () => {
                   </svg>
                   Sign in with Google
                 </button>
-                
+
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
-                  Don't have an account? 
-                  <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline ml-1">Sign up now</a>
+                  Don't have an account?
+                  <a
+                    href="#"
+                    className="text-blue-600 dark:text-blue-400 hover:underline ml-1"
+                  >
+                    Sign up now
+                  </a>
                 </p>
               </CardFooter>
             </Card>
@@ -223,42 +260,43 @@ const Login = () => {
           <TabsContent value="signup">
             <Card className="border-none shadow-lg bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
               <CardHeader className="pb-2">
-                <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">Create an Account</CardTitle>
-                <CardDescription className="text-center text-gray-500 dark:text-gray-400">Join our learning community today</CardDescription>
+                <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+                  Create an Account
+                </CardTitle>
+                <CardDescription className="text-center text-gray-500 dark:text-gray-400">
+                  Join our learning community today
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-firstName" className="text-gray-700 dark:text-gray-300 font-medium">First Name</Label>
+                    <Label
+                      htmlFor="signup-name"
+                      className="text-gray-700 dark:text-gray-300 font-medium"
+                    >
+                      Name
+                    </Label>
                     <div className="relative">
                       <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                       <Input
-                        id="signup-firstName"
-                        name="firstName"
-                        value={signupInput.firstName}
+                        id="signup-name"
+                        name="name"
+                        value={signupInput.name}
                         onChange={(e) => changeHandler(e, "signup")}
-                        placeholder="John"
+                        placeholder="yuvi ji"
                         required
                         className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-lastName" className="text-gray-700 dark:text-gray-300 font-medium">Last Name</Label>
-                    <Input
-                      id="signup-lastName"
-                      name="lastName"
-                      value={signupInput.lastName}
-                      onChange={(e) => changeHandler(e, "signup")}
-                      placeholder="Doe"
-                      required
-                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
                 </div>
-                
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-gray-700 dark:text-gray-300 font-medium">Email</Label>
+                  <Label
+                    htmlFor="signup-email"
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Email
+                  </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
@@ -274,7 +312,12 @@ const Login = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-gray-700 dark:text-gray-300 font-medium">Password</Label>
+                  <Label
+                    htmlFor="signup-password"
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Password
+                  </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
@@ -290,7 +333,12 @@ const Login = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-confirmPassword" className="text-gray-700 dark:text-gray-300 font-medium">Confirm Password</Label>
+                  <Label
+                    htmlFor="signup-confirmPassword"
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Confirm Password
+                  </Label>
                   <div className="relative">
                     <CheckCircle className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
@@ -306,7 +354,12 @@ const Login = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-accountType" className="text-gray-700 dark:text-gray-300 font-medium">Account Type</Label>
+                  <Label
+                    htmlFor="signup-accountType"
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    Account Type
+                  </Label>
                   <div className="relative">
                     <UserCircle className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <select
@@ -320,8 +373,19 @@ const Login = () => {
                       <option value="Instructor">Instructor</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                      <svg
+                        className="w-4 h-4 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        ></path>
                       </svg>
                     </div>
                   </div>
@@ -342,13 +406,13 @@ const Login = () => {
                     "Create Account"
                   )}
                 </Button>
-                
+
                 <div className="relative w-full flex items-center gap-2 my-2">
                   <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
                   <span className="text-sm text-gray-400">or</span>
                   <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
                 </div>
-                
+
                 <button
                   className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 border border-gray-300 rounded-lg transition-colors"
                   onClick={signInWithGoogle}
@@ -373,10 +437,15 @@ const Login = () => {
                   </svg>
                   Sign up with Google
                 </button>
-                
+
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
-                  Already have an account? 
-                  <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline ml-1">Login</a>
+                  Already have an account?
+                  <a
+                    href="#"
+                    className="text-blue-600 dark:text-blue-400 hover:underline ml-1"
+                  >
+                    Login
+                  </a>
                 </p>
               </CardFooter>
             </Card>
