@@ -14,6 +14,7 @@ const {
   editLecture,
   removeLecture,
   getLectureById,
+  togglePublishCourse,
   
 } = require("../controllers/CourseController")
 
@@ -48,6 +49,9 @@ router.get("/course/:courseId/lecture",auth,getCourseLecture)
 router.post("/course/:courseId/lecture/:lectureId", auth, editLecture);
 router.delete("/course/lecture/:lectureId",auth,removeLecture)
 router.get("/course/lecture/:lectureId",auth,getLectureById)
+
+
+router.patch("/course/:courseId",auth,togglePublishCourse)
 
 
 
