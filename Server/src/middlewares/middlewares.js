@@ -5,6 +5,7 @@ const User = require("../models/UserSchema");
 // This function is used as middleware to authenticate user requests
 exports.auth = async (req, res, next) => {
   try {
+    console.log()
     // Extract token from different possible locations
     const token = req.cookies.token;
 
