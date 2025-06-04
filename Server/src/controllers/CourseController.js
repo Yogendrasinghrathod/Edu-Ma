@@ -338,3 +338,29 @@ exports.togglePublishCourse = async (req, res) => {
     });
   }
 };
+
+
+
+exports.getPublishedCourse=async(_,res)=>{
+  try {
+
+    const courses=await Course.find({isPublished:true}).populate({path:"creator",select:"name profilePhoto"});
+    if(!courses){
+      return res.status(404).json({
+        message:"Courses not found"
+      })
+    }
+    return res.status(200).json({
+      courses
+    })
+    
+  } catch (error) {
+    console.error("🔥 Error in getPublishedCourse:", error); // 🔍 PRINT FULL ERROR
+    res.status(500).json({
+      message: "Failed to get Published course",
+      error: error.message, // ← Very helpful!
+    });
+  }
+
+  
+}

@@ -1,10 +1,15 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 import Course from "./Course";
-const courses = [1, 2, 3, 4, 5, 6];
+import { useGetPublishedCourseQuery } from "@/features/api/courseApi";
+
 
 const Courses = () => {
-  const isLoading = false;
+  const{ data,isLoading,isSuccess,isError}=useGetPublishedCourseQuery();
+  if(isError){
+    <h1>Failed to Load Course</h1>
+  }
+  // const isLoading = false;
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white py-16">
       <div className="max-w-7xl mx-auto px-6">
@@ -19,7 +24,7 @@ const Courses = () => {
             ? Array.from({ length: 6 }).map((_, index) => (
                 <CourseSkeleton key={index} />
               ))
-            : courses.map((course, index) => <Course key={index} />)}
+            : data?.courses.map((course, index) => <Course key={index}  course={course} />)}
         </div>
       </div>
     </div>

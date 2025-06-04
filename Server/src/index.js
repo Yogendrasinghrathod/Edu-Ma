@@ -35,7 +35,7 @@ app.use(express.json());
 app.use("/api/v1/auth", authRoutes);
 
 app.use("/api/v1",profileRoute);
-app.use("/api/v1",courseRoute);
+app.use("/api/v1/course",courseRoute);
 
 app.use("/api/v1/media",mediaRoute)
 

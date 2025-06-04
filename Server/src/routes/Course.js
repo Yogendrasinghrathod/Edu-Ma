@@ -15,6 +15,7 @@ const {
   removeLecture,
   getLectureById,
   togglePublishCourse,
+  getPublishedCourse,
   
 } = require("../controllers/CourseController")
 
@@ -32,26 +33,28 @@ const upload = require("../utils/multer")
 //                                      Course routes
 
 
-router.post("/course/create", auth, createCourse)
+router.post("/create", auth, createCourse)
 
-router.get("/course",auth, getCreatorCourse)  
+router.get("/publishedCourses",auth,getPublishedCourse)
 
-router.put("/course/:courseId",auth,upload.single("courseThumbnail"), updatedCourse)  
+router.get("/",auth, getCreatorCourse)  
 
-router.get("/course/:courseId",auth, getCourseById)  
+router.put("/:courseId",auth,upload.single("courseThumbnail"), updatedCourse)  
 
-router.post("/course/:courseId/lecture",auth,createLecture)
+router.get("/:courseId",auth, getCourseById)  
 
-router.get("/course/:courseId/lecture",auth,getCourseLecture)
+router.post("/:courseId/lecture",auth,createLecture)
 
-
-// Change from POST to PATCH for semantic correctness
-router.post("/course/:courseId/lecture/:lectureId", auth, editLecture);
-router.delete("/course/lecture/:lectureId",auth,removeLecture)
-router.get("/course/lecture/:lectureId",auth,getLectureById)
+router.get("/:courseId/lecture",auth,getCourseLecture)
 
 
-router.patch("/course/:courseId",auth,togglePublishCourse)
+/
+router.post("/:courseId/lecture/:lectureId", auth, editLecture);
+router.delete("/lecture/:lectureId",auth,removeLecture)
+router.get("/lecture/:lectureId",auth,getLectureById)
+
+
+router.patch("/:courseId",auth,togglePublishCourse)
 
 
 
