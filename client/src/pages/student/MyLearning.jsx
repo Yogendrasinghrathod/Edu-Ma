@@ -84,7 +84,7 @@ const MyLearning = () => {
             <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Your Enrolled Courses</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2].map((course, index) => (
-                <Course key={index} />
+                <Course key={index}  course={course}/>
               ))}
             </div>
           </>
