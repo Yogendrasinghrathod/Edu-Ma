@@ -1,3 +1,4 @@
+import BuyCourseButton from "@/components/BuyCourseButton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,6 +13,7 @@ import { PlayCircle, Lock } from "lucide-react";
 import React from "react";
 
 function CourseDetail() {
+
   const purchasedCourse = false;
   return (
     <div>
@@ -75,8 +77,8 @@ function CourseDetail() {
                 {purchasedCourse ? (
                   <Button className="w-full">Continue Course</Button>
                 ) : (
-                  <Button className="w-full">Purchase Course</Button>
-                )}
+                  <BuyCourseButton/>
+                )}  
               </CardFooter>
             </Card>
           </div>

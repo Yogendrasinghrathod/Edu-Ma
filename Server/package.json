@@ -2,16 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
- "type": "commonjs",
-
+  "type": "commonjs",
   "scripts": {
     "start": "npx kill-port 5001 && nodemon ./src/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  
-  
-
-
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -30,6 +25,7 @@
     "mongoose": "^8.9.5",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.0",
+    "stripe": "^18.2.1",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
