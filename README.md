@@ -45,6 +45,7 @@ Edu-Ma is a feature-rich educational technology platform designed to enhance onl
    JWT_SECRET=your_jwt_secret
    GOOGLE_CLIENT_ID=your_google_client_id
    GOOGLE_CLIENT_SECRET=your_google_client_secret
+   STRIPE_SECRET_KEY=youy_stripe_key
    ```
 4. Run the development server:
    ```sh
