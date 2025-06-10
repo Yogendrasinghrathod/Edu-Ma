@@ -4,14 +4,10 @@ const app = express();
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 const database = require("./config/database");
+app.use(express.json()); // For all normal JSON requests
 
-// const fileUpload = require("express-fileupload");
 
-// app.use(fileUpload({
-//     useTempFiles: true, 
-//     tempFileDir: "/src/images/"
-// }));
-// app.use(express.urlencoded({ extended: false}));
+
 
 const cors = require('cors');
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
@@ -29,9 +25,12 @@ const authRoutes = require("./routes/User");
 const profileRoute=require("./routes/Profile");
 const courseRoute=require('./routes/Course');
 const mediaRoute=require('./routes/MediaRoute')
+const purchaseRoute=require("./routes/purchaseRoute")
 
 app.use(express.json());
 
+
+app.use("/api/v1/purchase",purchaseRoute)
 app.use("/api/v1/auth", authRoutes);
 
 app.use("/api/v1",profileRoute);
