@@ -220,6 +220,7 @@ const CourseTab = () => {
                   onChange={changeEventHandler}
                   placeholder="5xx"
                   className="w-fit"
+                  
                 />
               </div>
             </div>
