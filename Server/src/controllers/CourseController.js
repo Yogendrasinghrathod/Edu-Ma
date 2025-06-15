@@ -9,10 +9,8 @@ const {
 } = require("../utils/cloudinary");
 
 mailSender = require("../utils/mailSender");
-const { courseEnrollmentEmail } = require("../mail/courseEnrollmentEmail");
+// const { courseEnrollmentEmail } = require("../mail/courseEnrollmentEmail");
 const { Lecture } = require("../models/lectureSchema");
-
-// Function to create a new course
 
 exports.createCourse = async (req, res) => {
   try {
@@ -172,8 +170,15 @@ exports.createLecture = async (req, res) => {
     }
 
     const lecture = await Lecture.create({ lectureTitle });
+    console.log(lecture);
 
+    //     console.log("courseId:", courseId);
+    // console.log("typeof courseId:", typeof courseId);
     const course = await Course.findById(courseId);
+    // console.log("Course found:", course);
+    // console.log("course.lectures:", course.lectures);
+    // console.log("Type of lectures:", typeof course.lectures);
+
     if (course) {
       course.lectures.push(lecture._id);
       await course.save();
@@ -215,9 +220,9 @@ exports.editLecture = async (req, res) => {
   try {
     const { lectureTitle, videoInfo, isPreviewFree } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
     const { courseId, lectureId } = req.params;
-    console.log(req.params);
+    // console.log(courseId,lectureId);
 
     const lecture = await Lecture.findById(lectureId);
     if (!lecture) {
@@ -225,6 +230,8 @@ exports.editLecture = async (req, res) => {
         message: "lecture not Found",
       });
     }
+    console.log(videoInfo);
+    
 
     //update lecture
     if (lectureTitle) lecture.lectureTitle = lectureTitle;
@@ -234,7 +241,7 @@ exports.editLecture = async (req, res) => {
 
     await lecture.save();
 
-    // console.log(lecture)
+    // console.log(lecture);
 
     //ensuring course still has lecture id if its not already added
     const course = await Course.findById(courseId);
@@ -326,11 +333,11 @@ exports.togglePublishCourse = async (req, res) => {
 
     //publishing the status based on query parameters
     course.isPublished = publish === "true";
-    await course.save()
-    const statusMessage=course.isPublished?"Published":"Unpublished"
+    await course.save();
+    const statusMessage = course.isPublished ? "Published" : "Unpublished";
     return res.status(200).json({
-      message:`Course  ${statusMessage}`
-    })
+      message: `Course  ${statusMessage}`,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Failed to update status",
@@ -339,21 +346,20 @@ exports.togglePublishCourse = async (req, res) => {
   }
 };
 
-
-
-exports.getPublishedCourse=async(_,res)=>{
+exports.getPublishedCourse = async (_, res) => {
   try {
-
-    const courses=await Course.find({isPublished:true}).populate({path:"creator",select:"name profilePhoto"});
-    if(!courses){
+    const courses = await Course.find({ isPublished: true }).populate({
+      path: "creator",
+      select: "name profilePhoto",
+    });
+    if (!courses) {
       return res.status(404).json({
-        message:"Courses not found"
-      })
+        message: "Courses not found",
+      });
     }
     return res.status(200).json({
-      courses
-    })
-    
+      courses,
+    });
   } catch (error) {
     console.error("🔥 Error in getPublishedCourse:", error); // 🔍 PRINT FULL ERROR
     res.status(500).json({
@@ -361,6 +367,4 @@ exports.getPublishedCourse=async(_,res)=>{
       error: error.message, // ← Very helpful!
     });
   }
-
-  
-}
+};

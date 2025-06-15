@@ -19,8 +19,8 @@ exports.uploadMedia = async (file) => {
     });
     return uploadResponse;
   } catch (error) {
-    console.error("Cloudinary upload error:", error.message);
-    throw new Error("Failed to upload image to Cloudinary");
+    console.error("Cloudinary upload error:", error);
+    throw new Error("Failed to upload  to Cloudinary");
   }
 };
 

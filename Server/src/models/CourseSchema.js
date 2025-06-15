@@ -11,12 +11,12 @@ const coursesSchema = new mongoose.Schema({
   lectures: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "lecture",
+      ref: "Lecture",
     },
   ],
   creator:{
     type: mongoose.Schema.Types.ObjectId,
-    ref:"user"
+    ref:"User"
     
   },
   
@@ -42,7 +42,7 @@ const coursesSchema = new mongoose.Schema({
  
   courseLevel: {
     type: String,
-    enum: ["Beginner", "Medium","Advance"],
+    enum: ["Beginner", "Medium","Advanced"],
   },
   coursePrice:{
     type:Number

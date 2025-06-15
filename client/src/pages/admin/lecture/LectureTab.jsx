@@ -143,7 +143,7 @@ const LectureTab = () => {
           </CardDescription>
           <div className="flex justify-end">
             <Button
-              diabled={removeLoading}
+              disabled={removeLoading}
               variant="destructive"
               className="bg-blue-500 text-white px-4 py-2 rounded-full"
               onClick={removeLectureHandler}

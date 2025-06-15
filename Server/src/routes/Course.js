@@ -48,7 +48,7 @@ router.post("/:courseId/lecture",auth,createLecture)
 router.get("/:courseId/lecture",auth,getCourseLecture)
 
 
-/
+
 router.post("/:courseId/lecture/:lectureId", auth, editLecture);
 router.delete("/lecture/:lectureId",auth,removeLecture)
 router.get("/lecture/:lectureId",auth,getLectureById)
