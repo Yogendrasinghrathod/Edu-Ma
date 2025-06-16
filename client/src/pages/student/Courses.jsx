@@ -11,9 +11,9 @@ const Courses = () => {
   }
   // const isLoading = false;
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white py-16">
+    <div className="dark:bg-black 0 py-16 ">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="font-bold text-4xl text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+        <h2 className="font-bold text-4xl text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 text-black dark:text-gray-600">
           Our Courses
         </h2>
         <p className="text-gray-600 text-center max-w-2xl mx-auto mb-12">

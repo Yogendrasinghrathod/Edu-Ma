@@ -66,10 +66,17 @@ const LectureTab = () => {
       const formData = new FormData();
       formData.append("file", file);
       setMediaProgress(true);
+      setBtnDisable(true);
+      setUploadProgress(0);
       try {
         const res = await axios.post(`${MEDIA_API}/upload-video`, formData, {
-          onUploadProgress: ({ loaded, total }) => {
-            setUploadProgress(Math.round(loaded * 100) / total);
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percentCompleted);
+            console.log(`Upload Progress: ${percentCompleted}%`);
+          },
+          headers: {
+            'Content-Type': 'multipart/form-data',
           },
         });
         if (res.data.success) {
@@ -84,6 +91,7 @@ const LectureTab = () => {
       } catch (error) {
         console.log(error);
         toast.error("video upload failed");
+        setBtnDisable(true);
       } finally {
         setMediaProgress(false);
       }
@@ -193,14 +201,14 @@ const LectureTab = () => {
           </div>
           {mediaProgress && (
             <div className="my-4">
-              <Progress value={uploadProgress} />
-              <p>{uploadProgress}% uploaded</p>
+              <Progress value={uploadProgress} className="h-2" />
+              <p className="text-sm mt-1">{uploadProgress}% uploaded</p>
             </div>
           )}
           <div className="mt-4">
             <Button
               className="rounded-full"
-              disabled={isLoading}
+              disabled={isLoading || btnDisable || mediaProgress}
               onClick={editLectureHandler}
             >
               {isLoading ? (
@@ -208,8 +216,13 @@ const LectureTab = () => {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   "Please Wait"
                 </>
+              ) : mediaProgress ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  "Uploading Video..."
+                </>
               ) : (
-                "Update lecture "
+                "Update lecture"
               )}
             </Button>
           </div>
