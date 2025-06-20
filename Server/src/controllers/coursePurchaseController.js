@@ -2,7 +2,6 @@
 // const Course = require("../models/CourseSchema");
 // const PurchaseCourse = require("../models/PurchaseCourse.model");
 
-
 // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // exports.createCheckoutSession = async (req, res) => {
@@ -31,7 +30,7 @@
 //       payment_method_types: ["card"],
 //       line_items: [
 //         {
-//           price_data: { 
+//           price_data: {
 //             currency: "inr",
 //             product_data: {
 //               name: course.courseTitle,
@@ -69,12 +68,10 @@
 //       url: session.url, // Return the Stripe checkout URL
 //     });
 
-    
 //   } catch (error) {
 //     console.log(error);
 //   }
 // };
-
 
 // exports.stripeWebhook = async (req, res) => {
 //   let event;
@@ -145,11 +142,10 @@
 //   res.status(200).send();
 // };
 
-
 const Razorpay = require("razorpay");
 const Course = require("../models/CourseSchema");
 const PurchaseCourse = require("../models/PurchaseCourse.model");
-
+require("dotenv").config();
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -210,30 +206,52 @@ const mongoose = require("mongoose");
 
 exports.razorpayWebhook = async (req, res) => {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  const receivedSignature = req.headers["x-razorpay-signature"];
 
-  const signature = req.headers["x-razorpay-signature"];
-  const body = req.body.toString(); // use raw body string
+  if (!secret) {
+    console.error("Webhook secret missing");
+    return res.status(500).send("Server config error");
+  }
 
-  const expectedSignature = crypto
+  if (!receivedSignature) {
+    console.error("Missing x-razorpay-signature header");
+    return res.status(400).json({ message: "Missing signature header" });
+  }
+
+  let rawBody = req.body;
+  if (typeof rawBody !== 'string' && !Buffer.isBuffer(rawBody)) {
+    // If it's an object, re-stringify it (shouldn't happen if middleware is correct)
+    rawBody = Buffer.from(JSON.stringify(rawBody));
+  }
+  const expectedSignature = require("crypto")
     .createHmac("sha256", secret)
-    .update(body)
+    .update(rawBody)
     .digest("hex");
 
-  if (signature !== expectedSignature) {
-    console.log("Signature mismatch:", signature, expectedSignature);
+  if (receivedSignature !== expectedSignature) {
+    console.log("❌ Signature mismatch:", receivedSignature, expectedSignature);
     return res.status(400).json({ message: "Invalid signature" });
   }
 
-  const event = JSON.parse(body); // manually parse raw body
+  let event;
+  if (Buffer.isBuffer(req.body)) {
+    event = JSON.parse(req.body.toString());
+  } else if (typeof req.body === 'string') {
+    event = JSON.parse(req.body);
+  } else if (typeof req.body === 'object') {
+    event = req.body; // Already parsed
+  } else {
+    throw new Error('Unknown body type');
+  }
 
   if (event.event === "payment.captured") {
     const payment = event.payload.payment.entity;
 
     try {
-      console.log("Payment captured event:", payment);
+      console.log("✅ Payment captured:", payment);
 
       const purchase = await PurchaseCourse.findOne({
-        paymentId: payment.order_id, // Or payment.id if that's what you stored
+        paymentId: payment.order_id,
       }).populate("courseId");
 
       if (!purchase) {
@@ -258,28 +276,24 @@ exports.razorpayWebhook = async (req, res) => {
         { new: true }
       );
 
-      console.log("Updating course ID:", purchase.courseId._id);
-console.log("Adding user ID:", purchase.userId);
-
-
       await Course.findByIdAndUpdate(
-  purchase.courseId._id,
-  {
-    $addToSet: {
-      enrolledStudents: new mongoose.Types.ObjectId(purchase.userId),
-    },
-  },
-  { new: true }
-);
+        purchase.courseId._id,
+        {
+          $addToSet: {
+            enrolledStudents: new mongoose.Types.ObjectId(purchase.userId),
+          },
+        },
+        { new: true }
+      );
 
       res.status(200).json({ message: "Payment verified and course unlocked" });
     } catch (err) {
-      console.error("Webhook error:", err);
+      console.error("Webhook handler error:", err);
       res.status(500).json({ message: "Internal Server Error" });
     }
   } else {
     res.status(200).json({ message: "Unhandled event type" });
   }
+
+  console.log("Headers received:", req.headers);
 };
-
-
