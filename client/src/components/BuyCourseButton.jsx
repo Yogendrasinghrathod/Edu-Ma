@@ -1,31 +1,44 @@
 import React, { useEffect } from "react";
 import { Button } from "./ui/button";
-import { useCreateCheckoutSessionMutation } from "@/features/api/purchaseApi";
+import { useCreateCheckoutSessionMutation, useVerifyPaymentMutation } from "@/features/api/purchaseApi";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 const BuyCourseButton = ({ courseId }) => {
   const [createCheckoutSession, { data,isLoading ,isError,isSuccess}] =
     useCreateCheckoutSessionMutation();
+  
+  const [verifyPayment, { isLoading: isVerifying }] = useVerifyPaymentMutation();
 
   const purchaseCourseHandler = async () => {
     await createCheckoutSession(courseId);
   };
 
-  // useEffect(()=>{
-  //   if(isSuccess){
-  //     if(data?.url){
-  //       window.location.href=data.url;    //redirect to stripe checkout url
-  //     }else{
-  //       toast.error("failed to create checkout")
-  //     }
-  //   }
-  //   if(isError){
-  //     toast.error("Invalid ")
-  //   }
-  // },[data,isSuccess,isError])
-
-
+  const handlePaymentSuccess = async (response) => {
+    try {
+      console.log("🎉 Payment successful response:", response);
+      
+      // Call the verification endpoint
+      const verificationData = {
+        orderId: response.razorpay_order_id,
+        paymentId: response.razorpay_payment_id,
+        signature: response.razorpay_signature
+      };
+      
+      console.log("📤 Sending verification data:", verificationData);
+      
+      const result = await verifyPayment(verificationData);
+      console.log("✅ Verification result:", result);
+      
+      toast.success("Payment successful ✅");
+      // Optionally redirect or refresh the page
+      window.location.reload();
+    } catch (error) {
+      console.error("❌ Payment verification failed:", error);
+      console.error("Error details:", error.data || error.message);
+      toast.error("Payment verification failed. Please contact support.");
+    }
+  };
 
   useEffect(() => {
   if (isSuccess) {
@@ -37,10 +50,7 @@ const BuyCourseButton = ({ courseId }) => {
           currency: data.currency,
           name: data.courseTitle,
           order_id: data.orderId,
-          handler: function (response) {
-            toast.success("Payment successful ✅");
-            // Optionally: call backend to verify payment here
-          },
+          handler: handlePaymentSuccess,
           theme: { color: "black" },
         };
 
@@ -61,14 +71,14 @@ const BuyCourseButton = ({ courseId }) => {
 
   return (
     <Button
-      disabled={isLoading}
+      disabled={isLoading || isVerifying}
       onClick={purchaseCourseHandler}
       className="w-full"
     >
-      {isLoading ? (
+      {isLoading || isVerifying ? (
         <>
           <Loader2 className="mr-2 h-4 animate-spin " />
-          Please wait
+          {isVerifying ? "Verifying Payment..." : "Please wait"}
         </>
       ) : (
         <>Purchase Course</>

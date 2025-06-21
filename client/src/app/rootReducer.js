@@ -8,7 +8,7 @@ const rootReducer = combineReducers({
     [authApi.reducerPath]: authApi.reducer,
     [courseApi.reducerPath]: courseApi.reducer,
     [purchaseApi.reducerPath]:purchaseApi.reducer,
-    auth: authReducer,
+    authSlice: authReducer,
 });
 
 export default rootReducer;

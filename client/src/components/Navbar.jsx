@@ -42,7 +42,7 @@ import store from "@/app/store";
 import { useLocation } from 'react-router-dom';
 
 const Navbar=()=>{
-  const {user}=useSelector(store=>store.auth);
+  const { user } = useSelector((state) => state.authSlice);
   
   const navigate = useNavigate();
 

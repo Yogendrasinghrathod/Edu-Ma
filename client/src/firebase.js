@@ -1,15 +1,16 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
+
 // Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyATjNkZ-Rcxv7j-w9z89WFW0vUi0o2M2eo",
-  authDomain: "trial-7eabe.firebaseapp.com",
-  projectId: "trial-7eabe",
-  storageBucket: "trial-7eabe.firebasestorage.app",
-  messagingSenderId: "1094605496558",
-  appId: "1:1094605496558:web:aad5fec26d5d1db756d3ff",
-  measurementId: "G-7L4719T5VD",
+  apiKey: "AIzaSyC220cCAFaXZ9jgdxhP_kZjT0Nax5uYn1c",
+  authDomain: "eduma-4e8e7.firebaseapp.com",
+  projectId: "eduma-4e8e7",
+  storageBucket: "eduma-4e8e7.firebasestorage.app",
+  messagingSenderId: "262228908128",
+  appId: "YOUR_APP_ID", // Please get this from your Firebase project settings
+  measurementId: "YOUR_MEASUREMENT_ID", // Please get this from your Firebase project settings
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -17,10 +18,18 @@ const provider = new GoogleAuthProvider();
 
 export const signInWithGoogle = async () => {
   try {
+    console.log("🔥 Starting Google sign-in process...");
     const result = await signInWithPopup(auth, provider);
     const idToken = await result.user.getIdToken(); // Get Firebase ID token
 
-    const response = await fetch("http://localhost:5001/api/v1/auth/signup", {
+    console.log("✅ Google sign-in successful, calling backend...");
+    console.log("User info:", {
+      name: result.user.displayName,
+      email: result.user.email,
+      photoURL: result.user.photoURL
+    });
+
+    const response = await fetch("http://localhost:5001/api/v1/auth/firebase-signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,14 +39,27 @@ export const signInWithGoogle = async () => {
         name: result.user.displayName,
         email: result.user.email,
       }),
+      credentials: 'include', // Include cookies
     });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("❌ Backend error:", errorData);
+      throw new Error(errorData.message || 'Backend authentication failed');
+    }
+
     const data = await response.json();
-    console.log("Server Response:", data);
+    console.log("✅ Server Response:", data);
+
+    // Store the JWT token in localStorage for client-side use
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      console.log("✅ JWT token stored in localStorage");
+    }
 
     return data; // Return server response for further use
   } catch (error) {
-    console.error("Error signing in:", error);
+    console.error("❌ Error signing in:", error);
     throw error; // Ensure errors can be caught when calling this function
   }
 };

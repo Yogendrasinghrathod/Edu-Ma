@@ -5,12 +5,14 @@ const {resetPassword,resetPasswordToken}=require('../controllers/resetPassword')
 
 
 // Import the required controllers and middleware functions
-const { login, signup ,changePassword,logout } = require("../controllers/AuthController");
+const { login, signup ,changePassword,logout, firebaseSignup, testFirebase } = require("../controllers/AuthController");
 const { auth, isAdmin, isInstructor, isStudent } = require("../middlewares/middlewares");
 
 // Define routes
 router.post("/login", login);    // Route for login
 router.post("/signup", signup);  // Route for signup
+router.post("/firebase-signup", firebaseSignup);  // Route for Firebase signup
+router.get("/test-firebase", testFirebase);  // Route for testing Firebase
 router.post("/changePassword",auth, changePassword)   //route to change password
 router.post("/logout",logout)  //route for logout
 

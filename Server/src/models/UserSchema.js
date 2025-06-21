@@ -1,48 +1,53 @@
 const mongoose = require("mongoose");
+const { Schema, model } = mongoose;
 
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    
-    email: {
-      type: String,
-      required: true,
-      trim: true,
-      unique:true
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    accountType: {
-      type: String,
-      enum: [ "Student", "Instructor"],
-      required: true,
-      default: "Student" 
-    },
-   
-    courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-      },
-    ],
-    token: {
-      type: String,
-    },
-    resetPasswordExpires: {
-      type: Date,
-    },
-    profilePhoto: {
-      type: String,
-    },
-    
+const UserSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
   },
-  { timestamps: true }
-);
+  
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    unique:true
+  },
+  password: {
+    type: String,
+    // Password is not required for Firebase/OAuth users
+    required: false, 
+  },
+  accountType: {
+    type: String,
+    enum: ["Student", "Instructor", "Admin"],
+    default: "Student",
+  },
+ 
+  courses: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Course",
+    },
+  ],
+  enrolledCourses: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Course",
+    },
+  ],
+  token: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
+  },
+  profilePhoto: {
+    type: String,
+    // required: true,
+  },
+  
+}, { timestamps: true });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = model("User", UserSchema);

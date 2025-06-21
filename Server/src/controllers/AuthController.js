@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 
 const mailSender = require("../utils/mailSender");
 const jwt = require("jsonwebtoken");
+const { auth: firebaseAuth } = require("../config/firebase");
 require("dotenv").config();
 
 // import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
@@ -197,8 +198,6 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
-
 //change Password
 
 const changePassword = (req, res) => {
@@ -275,4 +274,140 @@ const changePassword = (req, res) => {
     });
 };
 
-module.exports = { signup, login, changePassword, logout };
+// Firebase signup function
+const firebaseSignup = async (req, res) => {
+  try {
+    console.log("🔥 Firebase signup called");
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: "Firebase token is missing",
+      });
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+    console.log("🔥 Firebase token received");
+
+    // Verify the Firebase ID token
+    const decodedToken = await firebaseAuth.verifyIdToken(idToken);
+    console.log("✅ Firebase token verified for user:", decodedToken.email);
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: decodedToken.email });
+    if (existingUser) {
+      // User exists, generate JWT token and return
+      const token = jwt.sign(
+        { id: existingUser._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      existingUser.password = undefined;
+
+      return res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+          maxAge: 24 * 60 * 60 * 1000,
+        })
+        .status(200)
+        .json({
+          success: true,
+          message: "User logged in successfully",
+          user: existingUser,
+          token,
+        });
+    }
+
+    // Create new user
+    const { name, email } = req.body;
+    
+    const newUser = await User.create({
+      name: name || decodedToken.name || decodedToken.display_name || 'User',
+      email: email || decodedToken.email,
+      accountType: "Student",
+      profilePhoto: decodedToken.picture || `https://api.dicebear.com/5.x/initials/svg?seed=${name || 'User'}`,
+    });
+
+    console.log("✅ New user created from Firebase:", newUser.email);
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    newUser.password = undefined;
+
+    return res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .status(201)
+      .json({
+        success: true,
+        message: "User registered successfully",
+        user: newUser,
+        token,
+      });
+
+  } catch (error) {
+    console.error("❌ Firebase signup error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Firebase authentication failed",
+      error: error.message,
+    });
+  }
+};
+
+// Test Firebase configuration
+const testFirebase = async (req, res) => {
+  try {
+    console.log("🧪 Testing Firebase configuration...");
+    
+    // Test if Firebase Admin SDK is properly initialized
+    const { auth: firebaseAuth } = require("../config/firebase");
+    
+    // Try to list users (this will fail if not properly configured)
+    try {
+      await firebaseAuth.listUsers(1);
+      console.log("✅ Firebase Admin SDK is working");
+      res.status(200).json({
+        success: true,
+        message: "Firebase Admin SDK is properly configured",
+      });
+    } catch (error) {
+      console.log("⚠️ Firebase Admin SDK test failed:", error.message);
+      res.status(200).json({
+        success: false,
+        message: "Firebase Admin SDK is not properly configured",
+        error: error.message,
+        note: "Please ensure you have a valid firebaseServiceAccountKey.json file"
+      });
+    }
+  } catch (error) {
+    console.error("❌ Firebase test error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Firebase test failed",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { 
+  signup, 
+  login, 
+  changePassword, 
+  logout, 
+  firebaseSignup, 
+  testFirebase 
+};

@@ -26,6 +26,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userLoggedIn } from "@/features/authSlice";
 
 const Login = () => {
   const [loginInput, setLoginInput] = useState({
@@ -60,6 +62,8 @@ const Login = () => {
       isSuccess: loginIsSuccess,
     },
   ] = useLoginUserMutation();
+
+  const dispatch = useDispatch();
 
   const changeHandler = (e, type) => {
     const { name, value } = e.target;
@@ -104,6 +108,27 @@ const Login = () => {
     const inputData = type === "signup" ? signupInput : loginInput;
     const action = type === "signup" ? registerUser : loginUser;
     await action(inputData);
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      console.log("🚀 Initiating Google Sign-In...");
+      const data = await signInWithGoogle();
+      
+      if (data && data.success) {
+        console.log("✅ Google Sign-In Successful. Dispatching to Redux...");
+        dispatch(userLoggedIn({ user: data.user, token: data.token }));
+        toast.success(data.message || "Logged in successfully!");
+        navigate("/");
+      } else {
+        // This else block might not be necessary if signInWithGoogle throws errors, but it's good for safety.
+        console.error("❌ Google Sign-In failed:", data?.message);
+        toast.error(data?.message || "Google Sign-In failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("❌ An error occurred during Google Sign-In:", error);
+      toast.error(error.message || "An unexpected error occurred.");
+    }
   };
 
   return (
@@ -221,7 +246,7 @@ const Login = () => {
 
                 <button
                   className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 border border-gray-300 rounded-lg transition-colors"
-                  onClick={signInWithGoogle}
+                  onClick={handleGoogleSignIn}
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24">
                     <path
@@ -415,7 +440,7 @@ const Login = () => {
 
                 <button
                   className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 border border-gray-300 rounded-lg transition-colors"
-                  onClick={signInWithGoogle}
+                  onClick={handleGoogleSignIn}
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24">
                     <path
