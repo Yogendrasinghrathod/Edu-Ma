@@ -59,7 +59,7 @@ exports.updateProfile = async (req, res) => {
 exports.deleteAccount = async (req, res) => {
   try {
       const id = req.user.id;
-      console.log(id);
+      // console.log(id);
 
       const user = await User.findById({ _id: id });
       if (!user) {
@@ -108,7 +108,7 @@ exports.getAllUserDetails = async (req, res) => {
       const userId = req.id
       const user = await User.findById(userId).select("-password")
        
-      console.log(user)
+      // console.log(user)
 
       if(!user){
         return res.status(401).json({

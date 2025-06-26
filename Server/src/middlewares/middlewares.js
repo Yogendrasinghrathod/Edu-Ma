@@ -6,8 +6,8 @@ const User = require("../models/UserSchema");
 // This function is used as middleware to authenticate user requests
 exports.auth = async (req, res, next) => {
   try {
-    console.log("🔐 Auth middleware called for:", req.path);
-    console.log("Cookies:", req.cookies);
+    // console.log("🔐 Auth middleware called for:", req.path);
+    // console.log("Cookies:", req.cookies);
     
     // Extract token from different possible locations
     const token = req.cookies.token;
@@ -21,11 +21,11 @@ exports.auth = async (req, res, next) => {
       });
     }
 
-    console.log("✅ Token found:", token.substring(0, 20) + "...");
+    // console.log("✅ Token found:", token.substring(0, 20) + "...");
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("✅ Token decoded successfully, user ID:", decoded.id);
+    // console.log("✅ Token decoded successfully, user ID:", decoded.id);
 
     if (!decoded) {
       console.log("❌ Token verification failed");
@@ -37,7 +37,7 @@ exports.auth = async (req, res, next) => {
 
     // Set user info in request
     req.id = decoded.id;
-    console.log("👤 User ID set in request:", req.id);
+    // console.log("👤 User ID set in request:", req.id);
 
     // Move to next middleware
     next();
@@ -54,7 +54,7 @@ exports.auth = async (req, res, next) => {
 // Firebase authentication middleware
 exports.firebaseAuth = async (req, res, next) => {
   try {
-    console.log("🔥 Firebase auth middleware called");
+    // console.log("🔥 Firebase auth middleware called");
     
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -65,11 +65,11 @@ exports.firebaseAuth = async (req, res, next) => {
     }
 
     const idToken = authHeader.split('Bearer ')[1];
-    console.log("🔥 Firebase token received");
+    // console.log("🔥 Firebase token received");
 
     // Verify the Firebase ID token
     const decodedToken = await firebaseAuth.verifyIdToken(idToken);
-    console.log("✅ Firebase token verified for user:", decodedToken.email);
+    // console.log("✅ Firebase token verified for user:", decodedToken.email);
 
     // Find or create user in database
     let user = await User.findOne({ email: decodedToken.email });
@@ -82,13 +82,13 @@ exports.firebaseAuth = async (req, res, next) => {
         accountType: "Student", // Default account type
         profilePhoto: decodedToken.picture || `https://api.dicebear.com/5.x/initials/svg?seed=${decodedToken.name || 'User'}`,
       });
-      console.log("✅ New user created from Firebase:", user.email);
+      // console.log("✅ New user created from Firebase:", user.email);
     }
 
     // Set user info in request
     req.id = user._id;
     req.user = user;
-    console.log("👤 Firebase user ID set in request:", req.id);
+    // console.log("👤 Firebase user ID set in request:", req.id);
 
     next();
   } catch (error) {

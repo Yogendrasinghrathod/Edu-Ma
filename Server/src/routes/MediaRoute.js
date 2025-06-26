@@ -3,6 +3,7 @@ const { Router } = require('express');
 const upload = require("../utils/multer");
 const { uploadMedia } = require("../utils/cloudinary");
 const router=express.Router();
+const { auth } = require("../middlewares/middlewares.js");
 
 router.post("/upload-video",upload.single("file"),async(req,res)=>{
     try{

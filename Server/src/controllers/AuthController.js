@@ -171,7 +171,7 @@ const login = async (req, res) => {
         expiresIn: "1h",
       }
     );
-    console.log(token)
+    // console.log(token)
 
     user.password = undefined;
 

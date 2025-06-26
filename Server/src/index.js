@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+// import { courseProgressRoute } from "./routes/courseProgressRoute.js";
 
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
@@ -10,7 +11,7 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 require("dotenv").config();
 
 const PORT = process.env.PORT || 4000;
-
+const courseProgressRoute=require("./routes/courseProgressRoute.js")
 const authRoutes = require("./routes/User");
 const profileRoute=require("./routes/Profile");
 const courseRoute=require('./routes/Course');
@@ -29,6 +30,8 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1",profileRoute);
 app.use("/api/v1/course",courseRoute);
 app.use("/api/v1/media",mediaRoute)
+app.use("/api/v1/progress",courseProgressRoute);
+
 
 //default request
 app.get("/" , (req , res) => {

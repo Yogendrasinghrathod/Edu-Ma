@@ -29,7 +29,7 @@ exports.createCourse = async (req, res) => {
       creator: req.id,
     });
 
-    console.log(course);
+    // console.log(course);
 
     res.status(200).json({
       course,
@@ -71,7 +71,7 @@ exports.getCreatorCourse = async (req, res) => {
 exports.updatedCourse = async (req, res) => {
   try {
     const courseId = req.params.courseId;
-    console.log(courseId);
+    // console.log(courseId);
 
     const {
       courseTitle,
@@ -97,7 +97,7 @@ exports.updatedCourse = async (req, res) => {
         await deleteMediaFromCloudinary(publicId);
       }
       courseThumbnail = await uploadMedia(thumbnail.path);
-      console.log(courseThumbnail);
+      // console.log(courseThumbnail);
     }
     //upload thumbnail on cloudinary
 
@@ -230,7 +230,7 @@ exports.editLecture = async (req, res) => {
         message: "lecture not Found",
       });
     }
-    console.log(videoInfo);
+    // console.log(videoInfo);
     
 
     //update lecture

@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { useGetCourseDetailsWithStatusQuery } from "@/features/api/purchaseApi";
 import { PlayCircle, Lock } from "lucide-react";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { renderHTML } from "@/lib/htmlUtils";
 
 import ReactPlayer from 'react-player'
@@ -20,6 +20,7 @@ import ReactPlayer from 'react-player'
 function CourseDetail() {
   const params = useParams();
   const courseId = params.courseId;
+  const navigate=useNavigate();
 
   const { data, isLoading, error, isSuccess } =
     useGetCourseDetailsWithStatusQuery(courseId);
@@ -37,6 +38,12 @@ function CourseDetail() {
   }
 
   const { course, purchased } = data;
+
+  const handleContinueCourse=()=>{
+    if(purchased){
+      navigate(`/course-progress/${courseId}`)
+    }
+  }
 
   return (
     <div>
@@ -129,7 +136,7 @@ function CourseDetail() {
               </CardContent>
               <CardFooter className="flex justify-center p-4">
                 {purchased ? (
-                  <Button className="w-full">Continue Course</Button>
+                  <Button onClick={handleContinueCourse} className="w-full">Continue Course</Button>
                 ) : (
                   <BuyCourseButton courseId={courseId} />
                 )}
