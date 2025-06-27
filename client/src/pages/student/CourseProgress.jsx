@@ -11,6 +11,7 @@ import { CheckCircle, CheckCircle2, CirclePlay } from "lucide-react";
 import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const CourseProgress = () => {
   // const params=useParams()
@@ -65,6 +66,16 @@ const CourseProgress = () => {
   const handleInComplete = async () => {
     await inCompleteCourse(courseId);
   };
+
+  useEffect(()=>{
+    if(completedSuccess){
+      toast.success(markCompleteData.message);
+    }
+    if(inCompletedSuccess){
+      toast.success(markInCompleteData.message);
+    }
+
+  },[completedSuccess,inCompletedSuccess])
 
   // console.log("progress from backend:", progress);
   // console.log("lectures from backend:", courseDetails.lectures);
