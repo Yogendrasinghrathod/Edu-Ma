@@ -8,7 +8,7 @@ import {
   useUpdateLectureProgressMutation,
 } from "@/features/api/courseProgressApi";
 import { CheckCircle, CheckCircle2, CirclePlay } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -30,6 +30,19 @@ const CourseProgress = () => {
     { data: markInCompleteData, isSuccess: inCompletedSuccess },
   ] = useInCompleteCourseMutation();
 
+  useEffect(()=>{
+    if(completedSuccess){
+      refetch();
+      toast.success(markCompleteData.message);
+
+    }
+    if(inCompletedSuccess){
+      refetch();
+      toast.success(markInCompleteData.message);
+    }
+
+  },[completedSuccess,inCompletedSuccess])
+
   const [currentLecture, setCurrentLecture] = useState(null);
 
   if (isLoading) {
@@ -47,17 +60,17 @@ const CourseProgress = () => {
   const initialLecture =
     currentLecture || (courseDetails.lectures && courseDetails.lectures[0]);
 
-  const isLectureCompleted = (lectureId) => {
-    return progress.some((prog) => prog.lectureId === lectureId && prog.viewed);
-  };
+    const isLectureCompleted = (lectureId) => {
+      return progress.some((prog) => prog.lectureId === lectureId && prog.viewed);
+    };
+    const handleLectureProgress = async (lectureId) => {
+      await updateLectureProgress({ courseId, lectureId });
+      // console.log("happening")
+      refetch();
+    };
   const handleSelectLecture = (lecture) => {
     setCurrentLecture(lecture);
-    // handleLectureProgress(lecture._id);
-  };
-  const handleLectureProgress = async (lectureId) => {
-    await updateLectureProgress({ courseId, lectureId });
-    // console.log("happening")
-    refetch();
+    handleLectureProgress(lecture._id);
   };
 
   const handleCompleteCourse = async () => {
@@ -67,15 +80,7 @@ const CourseProgress = () => {
     await inCompleteCourse(courseId);
   };
 
-  useEffect(()=>{
-    if(completedSuccess){
-      toast.success(markCompleteData.message);
-    }
-    if(inCompletedSuccess){
-      toast.success(markInCompleteData.message);
-    }
-
-  },[completedSuccess,inCompletedSuccess])
+  
 
   // console.log("progress from backend:", progress);
   // console.log("lectures from backend:", courseDetails.lectures);
