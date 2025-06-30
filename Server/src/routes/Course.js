@@ -16,6 +16,7 @@ const {
   getLectureById,
   togglePublishCourse,
   getPublishedCourse,
+  searchCourse,
   
 } = require("../controllers/CourseController")
 
@@ -34,6 +35,7 @@ const upload = require("../utils/multer")
 
 
 router.post("/create", auth, createCourse)
+router.get("/search",searchCourse)
 
 router.get("/publishedCourses",auth,getPublishedCourse)
 

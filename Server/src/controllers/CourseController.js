@@ -346,6 +346,49 @@ exports.togglePublishCourse = async (req, res) => {
   }
 };
 
+exports.searchCourse=async(req,res)=>{
+  try {
+    const {query="" ,categories=[],sortByPrice=""}=req.query;
+    //create search query
+    const searchCriteria={
+      isPublished:true,
+      $or:[
+        {courseTitle:{$regex:query , $option:"i"}},
+        {subTitle:{$regex:query , $option:"i"}},
+        {category:{$regex:query , $option:"i"}},
+      ]
+    }
+    //if categories are selected 
+    if(categories.length>0){
+      searchCriteria.category={$in:categories};
+    }
+    
+    //sorting order
+    const sortOptions={};
+    if(sortByPrice==="low"){
+      sortOptions.coursePrice = 1; // ascending order
+    }
+    else if(sortByPrice==="low"){
+      sortOptions.coursePrice=-1;   //descending order
+    }
+
+    let courses =await  Course.find(searchCriteria).populate({path:"creator",select:"name photoUrl"}).sort(sortOptions);
+
+    return res.status(200).json({
+      success:true,
+      courses:courses || [],
+      
+    })
+
+
+
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+}
+
 exports.getPublishedCourse = async (_, res) => {
   try {
     const courses = await Course.find({ isPublished: true }).populate({
