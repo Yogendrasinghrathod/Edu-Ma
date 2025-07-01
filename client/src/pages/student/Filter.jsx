@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import React from "react";
+import React, { useState } from "react";
 
 const categories = [
   { id: "nextjs", label: "Next JS" },
@@ -26,8 +26,20 @@ const categories = [
   { id: "html", label: "HTML" },
 ];
 
-function Filter() {
-  const handleCategoryChange = (categoryId) => {};
+const Filter = (handleFilterChange) => {
+  const [selectedCategories, SetSelectedCategories] = useState([]);
+  const [sortByPrice, setSortByPrice] = useState("");
+  const handleCategoryChange = (categoryId) => {
+    SetSelectedCategories((prevCategories) => {
+      const newCategories = prevCategories.includes(categoryId)
+        ? prevCategories.filter((id) => id != categoryId)
+        : [...prevCategories, categoryId];
+
+        handleFilterChange(newCategories,sortByPrice);
+        return newCategories;
+    });
+
+  };
   return (
     <div className="w-full md:w-[20%] ">
       <div className="flex item-center  justify-between">
@@ -66,6 +78,6 @@ function Filter() {
       </div>
     </div>
   );
-}
+};
 
 export default Filter;

@@ -8,37 +8,7 @@ const jwt = require("jsonwebtoken");
 const { auth: firebaseAuth } = require("../config/firebase");
 require("dotenv").config();
 
-// import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
-// const auth = getAuth();
-// const provider = new GoogleAuthProvider();
-
-// export const signInWithGoogle = async () => {
-//   try {
-//     const result = await signInWithPopup(auth, provider);
-//     const idToken = await result.user.getIdToken(); // Firebase ID Token
-
-//     const [name] = result.user.displayName;
-
-//     await fetch("http://localhost:5000/api/signup", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${idToken}`, // Send token for verification
-//       },
-//       body: JSON.stringify({
-//         name,
-//         email: result.user.email,
-//         image: result.user.photoURL,
-//         accountType: "Student", // Change based on user selection
-//       }),
-//     });
-
-//     console.log("User authenticated & sent to backend");
-//   } catch (error) {
-//     console.error("Error signing in:", error);
-//   }
-// };
 
 const logout = async (req, res) => {
   try {
@@ -122,6 +92,7 @@ const signup = async (req, res) => {
     });
   }
 };
+
 
 const login = async (req, res) => {
   try {
