@@ -353,9 +353,9 @@ exports.searchCourse=async(req,res)=>{
     const searchCriteria={
       isPublished:true,
       $or:[
-        {courseTitle:{$regex:query , $option:"i"}},
-        {subTitle:{$regex:query , $option:"i"}},
-        {category:{$regex:query , $option:"i"}},
+        {courseTitle:{$regex:query , $options:"i"}},
+        {subTitle:{$regex:query , $options:"i"}},
+        {category:{$regex:query , $options:"i"}},
       ]
     }
     //if categories are selected 

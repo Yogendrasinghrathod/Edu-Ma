@@ -38,13 +38,17 @@ const Filter = (handleFilterChange) => {
         handleFilterChange(newCategories,sortByPrice);
         return newCategories;
     });
-
   };
+
+  const selectByPriceHandler=(selectedValue)=>{
+    setSortByPrice(selectedValue);
+    handleFilterChange(selectedCategories,selectedValue);
+  }
   return (
     <div className="w-full md:w-[20%] ">
       <div className="flex item-center  justify-between">
         <h1 className="font -semibold  text-lg md:text-xl">Filter options</h1>
-        <Select>
+        <Select  onValueChange={selectByPriceHandler}>
           <SelectTrigger>
             <SelectValue placeholder="sort by" />
           </SelectTrigger>

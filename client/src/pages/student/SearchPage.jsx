@@ -12,9 +12,13 @@ function SearchPage() {
   const query=searchParams.get("query");
   const [selectCategories,SetSelectCategories]=useState([]);
   const [sortByPrice,setSortByPrice]=useState("");
-  const {data,isLoading}=useGetSearchCoursesQuery();
+  const {data,isLoading}=useGetSearchCoursesQuery({
+    searchQuery:query,
+    categories:selectCategories,
+    sortByPrice
+  });
   // const isLoading = false;
-  const isEmpty = false;
+  const isEmpty =!isLoading && data?.course?.length===0;
   const handleFilterChange=(categories,price)=>{
     SetSelectCategories(categories);
     sortByPrice(price);
@@ -40,7 +44,7 @@ function SearchPage() {
           ) : isEmpty ? (
             <CourseNotFound />
           ) : (
-            [1, 2.3].map((course, idx) => <SearchResult key={idx} />)
+            data?.courses?.map((course) => <SearchResult key={course._id}  course={course}/>)
           )}
         </div>
       </div>
