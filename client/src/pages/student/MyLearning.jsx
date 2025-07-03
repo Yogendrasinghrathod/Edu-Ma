@@ -8,7 +8,7 @@ const MyLearning = () => {
   const {data,isLoading} = useLoadUserQuery()
   // const isLoading=true;
   // console.log(data);
-  const myLearningCourses = [1,2];
+  const myLearningCourses = data?.user.enrolledCourses || [];
 
   return (
     <div className="max-w-6xl mx-auto mt-24 mb-32 px-4 md:px-6">
@@ -48,7 +48,7 @@ const MyLearning = () => {
         ) : (
           <>
             {/* Progress Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               <div className="bg-gradient-to-br from-blue-150 to-indigo-150 dark:from-blue-200 dark:to-indigo-500 p-6 rounded-xl border border-blue-100 dark:border-blue-800/30 shadow-sm">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/50">
@@ -78,12 +78,12 @@ const MyLearning = () => {
                 </div>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">68%</p>
               </div>
-            </div>
+            </div> */}
 
             {/* Courses Grid */}
             <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Your Enrolled Courses</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2].map((course, index) => (
+              {myLearningCourses.map((course, index) => (
                 <Course key={index}  course={course}/>
               ))}
             </div>

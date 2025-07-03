@@ -28,7 +28,7 @@ const Course = ({course}) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10 rounded-full border-2 border-blue-500 shadow-sm">
-                <AvatarImage src={course?.creator.profilePhoto || "https://github.com/shadcn.png" }/>
+                <AvatarImage src={course?.creator?.profilePhoto || "https://github.com/shadcn.png" }/>
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <h1 className="font-medium text-gray-700 dark:text-gray-300">{course.creator?.name}</h1>
