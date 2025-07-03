@@ -368,7 +368,7 @@ exports.searchCourse=async(req,res)=>{
     if(sortByPrice==="low"){
       sortOptions.coursePrice = 1; // ascending order
     }
-    else if(sortByPrice==="low"){
+    else if(sortByPrice==="high"){
       sortOptions.coursePrice=-1;   //descending order
     }
 

@@ -106,7 +106,7 @@ exports.deleteAccount = async (req, res) => {
 exports.getAllUserDetails = async (req, res) => {
     try {
       const userId = req.id
-      const user = await User.findById(userId).select("-password")
+      const user = await User.findById(userId).select("-password").populate("enrolledCourses")
        
       // console.log(user)
 

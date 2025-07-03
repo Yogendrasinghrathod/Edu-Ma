@@ -180,11 +180,11 @@ const Profile = () => {
         <h1 className="font-medium text-lg text-center">Enrolled Courses</h1>
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5"> */}
           {
-            user.courses.length===0? (
+            !user.enrolledCourses || user.enrolledCourses.length===0? (
               <h1 className="text-center"> No course enrolled by you yet </h1>
             ):(
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5">
-              {user.courses.map((course,index)=> <Course key={index}/>)}
+              {user.enrolledCourses.map((course,index)=> <Course key={course._id || index} course={course}/>)}
               </div>
             )
           }

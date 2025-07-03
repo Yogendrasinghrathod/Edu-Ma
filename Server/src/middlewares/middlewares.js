@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const { auth: firebaseAuth } = require("../config/firebase");
 require("dotenv").config();
 const User = require("../models/UserSchema");
+// const Lecture = require("../models/lectureSchema");
 
 // This function is used as middleware to authenticate user requests
 exports.auth = async (req, res, next) => {

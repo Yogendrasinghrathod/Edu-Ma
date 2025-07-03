@@ -3,6 +3,9 @@ const Razorpay = require("razorpay");
 const Course = require("../models/CourseSchema");
 const PurchaseCourse = require("../models/PurchaseCourse.model");
 require("dotenv").config();
+const crypto = require("crypto");
+const User = require("../models/UserSchema");
+const Lecture = require("../models/lectureSchema");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -54,12 +57,10 @@ exports.createCheckoutSession = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-const crypto = require("crypto");
-const User = require("../models/UserSchema");
-const Lecture = require("../models/lectureSchema");
+
 
 // const crypto = require("crypto");
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 
 exports.razorpayWebhook = async (req, res) => {
   console.log("🔔 Webhook received");
@@ -155,77 +156,30 @@ exports.razorpayWebhook = async (req, res) => {
       console.log("User ID:", purchase.userId);
       console.log("Course ID:", purchase.courseId._id);
 
-      const updatedUser = await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate(
         purchase.userId,
         { $addToSet: { enrolledCourses: purchase.courseId._id } },
         { new: true }
       );
-      console.log("✅ User updated:", updatedUser.enrolledCourses);
+      
 
-      // Update course's enrolled students
-      console.log("📚 Updating course's enrolled students");
-      console.log("Course ID:", purchase.courseId._id);
-      console.log("Course ID type:", typeof purchase.courseId._id);
-      console.log("Student ID to add:", purchase.userId);
-      console.log("Student ID type:", typeof purchase.userId);
-
-      // Check current course state before update
-      const courseBeforeUpdate = await Course.findById(purchase.courseId._id);
-      console.log("📊 Course before update:", {
-        _id: courseBeforeUpdate._id,
-        enrolledStudents: courseBeforeUpdate.enrolledStudents,
-        enrolledStudentsCount: courseBeforeUpdate.enrolledStudents
-          ? courseBeforeUpdate.enrolledStudents.length
-          : 0,
-      });
-
-      // Try multiple approaches to ensure enrollment works
-      let updatedCourse;
-      try {
-        // First try with original IDs
-        updatedCourse = await Course.findByIdAndUpdate(
+      await Course.findByIdAndUpdate(
         purchase.courseId._id,
-        {
-          $addToSet: {
-              enrolledStudents: purchase.userId,
-            },
-          },
-          { new: true }
-        );
-      } catch (error) {
-        console.log(
-          "⚠️ First attempt failed, trying with string conversion..."
-        );
-        // If that fails, try converting to strings
-        updatedCourse = await Course.findByIdAndUpdate(
-          purchase.courseId._id.toString(),
-          {
-            $addToSet: {
-              enrolledStudents: purchase.userId.toString(),
-          },
-        },
+        { $addToSet: { enrolledStudents: purchase.userId } }, // Add user ID to enrolledStudents
         { new: true }
       );
-      }
+   
+      
+      
 
-      console.log("✅ Course after update:", {
-        _id: updatedCourse._id,
-        enrolledStudents: updatedCourse.enrolledStudents,
-        enrolledStudentsCount: updatedCourse.enrolledStudents
-          ? updatedCourse.enrolledStudents.length
-          : 0,
-      });
-
-      console.log("✅ All updates completed successfully");
-      res.status(200).json({ message: "Payment verified and course unlocked" });
+      // console.log("✅ All updates completed successfully");
+      // res.status(200).json({ message: "Payment verified and course unlocked" });
     } catch (err) {
       console.error("❌ Webhook handler error:", err);
-      res.status(500).json({ message: "Internal Server Error" });
+      return res.status(500).json({ message: "Internal Server Error" });
     }
-  } else {
-    console.log("ℹ️ Unhandled event type:", event.event);
-    res.status(200).json({ message: "Unhandled event type" });
-  }
+  } 
+  res.status(200).send();
 };
 
 exports.verifyPayment = async (req, res) => {
@@ -598,8 +552,8 @@ exports.getCourseDetailsWithPurchaseStatus = async (req, res) => {
       });
     }
 
-    console.log("✅ Course found:", course.courseTitle);
-    console.log("✅ Purchase status:", purchased ? "Purchased" : "Not purchased");
+    // console.log("✅ Course found:", course.courseTitle);
+    // console.log("✅ Purchase status:", purchased ? "Purchased" : "Not purchased");
 
     return res.status(200).json({
       success: true,
@@ -615,20 +569,20 @@ exports.getCourseDetailsWithPurchaseStatus = async (req, res) => {
   }
 };
 
-exports.getAllPurchasedCourses = async (req, res) => {
+exports.getAllPurchasedCourses = async (_, res) => {
   try {
-    const userId = req.id;
+    // const userId = req.id;
     
-    console.log("🔍 Getting all purchased courses for userId:", userId);
+    // console.log("🔍 Getting all purchased courses for userId:", userId);
 
     const purchasedCourses = await PurchaseCourse.find({ 
-      userId: userId, 
+      // userId: userId, 
       status: "completed" 
     })
       .populate("courseId")
-      .populate({ path: "userId" });
+      // .populate({ path: "userId" });
 
-    console.log("✅ Found", purchasedCourses.length, "purchased courses");
+    // console.log("✅ Found", purchasedCourses.length, "purchased courses");
 
     return res.status(200).json({
       success: true,
