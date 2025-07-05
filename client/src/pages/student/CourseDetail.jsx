@@ -130,7 +130,7 @@ function CourseDetail() {
                 <h1>Lecture Title</h1>
                 <Separator className="my-2" />
                 <h1 className="text-lg md:text-xl font-semibold">
-                  {purchased?(<h1 className="text-blue-800">enrolled</h1>): (`₹${course.coursePrice}` || "Course Price")}
+                  {purchased?(<span className="text-blue-800">enrolled</span>): (`₹${course.coursePrice}` || "Course Price")}
                   
                 </h1>
               </CardContent>

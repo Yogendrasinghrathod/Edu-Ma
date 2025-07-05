@@ -16,7 +16,7 @@ const BuyCourseButton = ({ courseId }) => {
 
   const handlePaymentSuccess = async (response) => {
     try {
-      console.log("🎉 Payment successful response:", response);
+      // console.log("🎉 Payment successful response:", response);
       
       // Call the verification endpoint
       const verificationData = {
@@ -25,10 +25,10 @@ const BuyCourseButton = ({ courseId }) => {
         signature: response.razorpay_signature
       };
       
-      console.log("📤 Sending verification data:", verificationData);
+      // console.log("📤 Sending verification data:", verificationData);
       
       const result = await verifyPayment(verificationData);
-      console.log("✅ Verification result:", result);
+      // console.log("✅ Verification result:", result);
       
       toast.success("Payment successful ✅");
       // Optionally redirect or refresh the page

@@ -30,12 +30,19 @@ const Filter = ({ handleFilterChange }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortByPrice, setSortByPrice] = useState("");
 
+
   const handleCategoryChange = (categoryId) => {
+    // console.log(categoryId);
+    
     setSelectedCategories((prevCategories) => {
+      // console.log(prevCategories);
+      
       const newCategories = prevCategories.includes(categoryId)
-        ? prevCategories.filter((id) => id !== categoryId)
+        ? prevCategories.filter((id) => {id !== categoryId}
+        )
         : [...prevCategories, categoryId];
 
+        // console.log(newCategories);
         handleFilterChange(newCategories, sortByPrice);
         return newCategories;
     });
@@ -45,6 +52,8 @@ const Filter = ({ handleFilterChange }) => {
     setSortByPrice(selectedValue);
     handleFilterChange(selectedCategories, selectedValue);
   }
+
+  
   return (
     <div className="w-full md:w-[20%]">
       <div className="flex items-center justify-between">
@@ -64,11 +73,12 @@ const Filter = ({ handleFilterChange }) => {
       </div>
       <Separator className="my-4" />
       <div>
-        <h1 className="font-semibold mb-2">CATEGORY</h1>
+        <h1 className="font-semibold mb-2  flex md:flex-row gap-4">CATEGORY</h1>
         {categories.map((category) => (
           <div className="flex items-center space-x-2 my-2">
             <Checkbox
               id={category.id}
+              // categories={category.id}
               onCheckedChange={() => handleCategoryChange(category.id)}
             />
             <Label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">

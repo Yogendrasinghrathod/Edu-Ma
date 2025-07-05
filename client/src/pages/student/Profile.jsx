@@ -54,7 +54,7 @@ const Profile = () => {
       // navigate("/profile")
     }
     if(isError){
-      console.log("kuch toh gadbad hai daya")
+      // console.log("kuch toh gadbad hai daya")
       toast.error(error.message);
     }
   },[error,updateUserData,isSuccess,isError])

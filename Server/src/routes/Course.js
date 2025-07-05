@@ -37,7 +37,7 @@ const upload = require("../utils/multer")
 router.post("/create", auth, createCourse)
 router.get("/search",searchCourse)
 
-router.get("/publishedCourses",auth,getPublishedCourse)
+router.get("/publishedCourses",getPublishedCourse)
 
 router.get("/",auth, getCreatorCourse)  
 
