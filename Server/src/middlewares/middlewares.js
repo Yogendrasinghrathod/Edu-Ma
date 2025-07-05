@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { auth: firebaseAuth } = require("../config/firebase");
-require("dotenv").config();
+const config = require("../config/config");
 const User = require("../models/UserSchema");
 // const Lecture = require("../models/lectureSchema");
 
@@ -25,7 +25,7 @@ exports.auth = async (req, res, next) => {
     // console.log("✅ Token found:", token.substring(0, 20) + "...");
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, config.JWT_SECRET);
     // console.log("✅ Token decoded successfully, user ID:", decoded.id);
 
     if (!decoded) {
@@ -81,7 +81,7 @@ exports.firebaseAuth = async (req, res, next) => {
         name: decodedToken.name || decodedToken.display_name || 'User',
         email: decodedToken.email,
         accountType: "Student", // Default account type
-        profilePhoto: decodedToken.picture || `https://api.dicebear.com/5.x/initials/svg?seed=${decodedToken.name || 'User'}`,
+        profilePhoto: decodedToken.picture || `${config.DICEBEAR_API_URL}?seed=${decodedToken.name || 'User'}`,
       });
       // console.log("✅ New user created from Firebase:", user.email);
     }

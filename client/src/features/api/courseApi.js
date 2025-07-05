@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { COURSE_API } from "../../config/api";
 
-const COURSE_API = "http://localhost:5001/api/v1/course";
 export const courseApi = createApi({
   reducerPath: "courseApi",
   tagTypes: ["Course", "Refetch_Creator_Course", "Refetch_Lecture"],

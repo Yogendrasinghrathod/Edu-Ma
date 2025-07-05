@@ -1,6 +1,7 @@
 const User  = require("../models/UserSchema.js");
 const mailSender = require("../utils/mailSender.js");
 const bcrypt = require('bcryptjs');
+const config = require("../config/config");
 
 const crypto = require("crypto")
 
@@ -45,7 +46,7 @@ exports.resetPasswordToken = async (req , res) => {
 
         
         //If user exits : generate the link
-        const url = `https://Edtech/update-password/${token}`;
+        const url = `${config.FRONTEND_URL}/update-password/${token}`;
 
         //Send Mail containing the URL 
         

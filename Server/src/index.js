@@ -6,11 +6,10 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 const cors = require('cors');
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+const config = require('./config/config');
+app.use(cors({ origin: config.CLIENT_URL, credentials: true }));
 
-require("dotenv").config();
-
-const PORT = process.env.PORT || 4000;
+const PORT = config.PORT;
 const courseProgressRoute=require("./routes/courseProgressRoute.js")
 const authRoutes = require("./routes/User");
 const profileRoute=require("./routes/Profile");

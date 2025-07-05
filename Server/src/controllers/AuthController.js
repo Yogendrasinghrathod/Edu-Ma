@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const mailSender = require("../utils/mailSender");
 const jwt = require("jsonwebtoken");
 const { auth: firebaseAuth } = require("../config/firebase");
-require("dotenv").config();
+const config = require("../config/config");
 
 
 
@@ -71,7 +71,7 @@ const signup = async (req, res) => {
       email: email.toLowerCase(),
       password: hashedPassword,
       accountType, 
-      profilePhoto: `https://api.dicebear.com/5.x/initials/svg?seed=${name}`,
+      profilePhoto: `${config.DICEBEAR_API_URL}?seed=${name}`,
     });
 
   
@@ -126,7 +126,7 @@ const login = async (req, res) => {
     }
 
 
-    if (!process.env.JWT_SECRET) {
+    if (!config.JWT_SECRET) {
       return res.status(500).json({
         success: false,
         message: "Internal Server Error: JWT Secret not found",
@@ -137,9 +137,9 @@ const login = async (req, res) => {
       {
         id: user._id,
       },
-      process.env.JWT_SECRET,
+      config.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: config.JWT_EXPIRE,
       }
     );
     // console.log(token)

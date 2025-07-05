@@ -8,6 +8,7 @@ import { Toaster } from "./components/ui/sonner";
 import appStore from "@/app/store";
 import { useLoadUserQuery } from "./features/api/authApi";
 import LoadingSpinner from "./components/LoadingSpinner";
+import "./utils/envCheck"; // Check environment variables on startup
 
 const Custom = ({ children }) => {
   const { isLoading } = useLoadUserQuery();

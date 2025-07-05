@@ -1,4 +1,4 @@
-# Root level .gitignore - Project-wide ignores
+# Server (Backend) specific .gitignore
 
 # Dependencies
 node_modules/
@@ -13,25 +13,13 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# IDE and Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
 # Logs
 logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
 # Runtime data
 pids
@@ -97,7 +85,9 @@ temp/
 build/
 dist/
 
-# Uploads and media files (if not needed in repo)
+# Uploads and media files (IMPORTANT: Keep this for backend)
+# Note: You might want to keep some uploads in git for testing
+# Comment out the line below if you want to track uploads
 uploads/
 media/
 
@@ -108,4 +98,43 @@ firestore-debug.log
 ui-debug.log
 
 # Local development
-*.local 
+*.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# PM2
+.pm2/
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.csr
+
+# Backup files
+*.bak
+*.backup
+
+# Test files
+test-results/
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db 
