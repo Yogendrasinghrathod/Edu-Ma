@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api/v1";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Individual API endpoints
 export const AUTH_API = `${API_BASE_URL}/auth`;
@@ -11,11 +11,11 @@ export const PROFILE_API = `${API_BASE_URL}/profile`;
 // Firebase Configuration
 export const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY ,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "eduma-4e8e7.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "eduma-4e8e7",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "eduma-4e8e7.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "262228908128",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:262228908128:web:YOUR_APP_ID",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID ,
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "",
 };
 
