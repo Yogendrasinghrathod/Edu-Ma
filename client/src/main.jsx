@@ -11,7 +11,9 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import "./utils/envCheck"; // Check environment variables on startup
 
 const Custom = ({ children }) => {
-  const { isLoading } = useLoadUserQuery();
+  const token = localStorage.getItem('token');
+  // Only fetch user if a token exists
+  const { isLoading } = useLoadUserQuery(undefined, { skip: !token });
   return <>{isLoading ? <LoadingSpinner /> : <>{children}</>}</>;
 };
 
