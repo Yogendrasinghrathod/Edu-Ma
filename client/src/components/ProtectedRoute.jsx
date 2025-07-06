@@ -14,7 +14,7 @@ export const ProtectedRoute =({children})=>{
 export const AuthenticatedUser=({children})=>{
     const {isAuthenticated}=useSelector(store=>store.authSlice);
 
-    if(isAuthenticated){ 
+    if(!isAuthenticated){ 
         return <Navigate to ="/"/>
     }
 
