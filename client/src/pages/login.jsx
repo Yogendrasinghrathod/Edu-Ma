@@ -134,7 +134,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex w-full justify-center items-center min-h-[calc(100vh-6rem)] bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 px-4 pt-10">
+    <div className="flex w-full justify-center items-center min-h-[calc(100vh-6rem)] bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 px-4 pt-24">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">

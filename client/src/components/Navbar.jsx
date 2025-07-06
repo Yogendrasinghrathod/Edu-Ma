@@ -159,16 +159,39 @@ const Navbar=()=>{
 export default Navbar;
 
 const MobileNavbar = () => {
-  const accountType = "Instructor";
+  const { user } = useSelector((state) => state.authSlice);
+  const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
+  const navigate = useNavigate();
+
+  const logoutHandler = async () => {
+    await logoutUser();
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data.message || "User Logged out successfully");
+      navigate("/login");
+    }
+  }, [isSuccess]);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Avatar className="cursor-pointer h-10 w-10 rounded-full border-2 border-blue-500 hover:border-blue-400 transition-all">
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white">
-            ED
-          </AvatarFallback>
-        </Avatar>
+        {user ? (
+          <Avatar className="cursor-pointer h-10 w-10 rounded-full border-2 border-blue-500 hover:border-blue-400 transition-all">
+            <AvatarImage src={user.profilePhoto || "https://github.com/shadcn.png"} />
+            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+              {user.name ? user.name.substring(0, 2).toUpperCase() : "ED"}
+            </AvatarFallback>
+          </Avatar>
+        ) : (
+          <Button
+            variant="outline"
+            className="rounded-full border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 px-4"
+          >
+            <Link to="/login">Login</Link>
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent className="flex flex-col gap-4 border-l border-gray-200 dark:border-gray-800">
         <SheetHeader className="flex flex-col items-center justify-between mt-4 mb-2">
@@ -187,53 +210,65 @@ const MobileNavbar = () => {
 
         <div className="h-px w-full bg-gray-200 dark:bg-gray-800 my-2"></div>
 
-        <nav className="flex flex-col space-y-1 w-full">
-          <Link
-            to="/courses"
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
-          >
-            <Compass size={20} className="text-blue-600 dark:text-blue-400" />
-            <span className="font-medium">Explore Courses</span>
-          </Link>
-          <Link
-            to="/myLearning"
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
-          >
-            <BookOpen size={20} className="text-blue-600 dark:text-blue-400" />
-            <span className="font-medium">My Learning</span>
-          </Link>
-          <Link
-            to="/profile"
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
-          >
-            <UserCircle
-              size={20}
-              className="text-blue-600 dark:text-blue-400"
-            />
-            <span className="font-medium">Edit Profile</span>
-          </Link>
-          <Link
-            
-            to="/logout"
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
-          >
-            <LogOut size={20} className="text-blue-600 dark:text-blue-400" />
-            <span className="font-medium">Logout</span>
-          </Link>
-        </nav>
-
-        {accountType == "Instructor" && (
-          <SheetFooter className="mt-auto mb-6">
-            <SheetClose asChild>
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700"
+        {user ? (
+          <>
+            <nav className="flex flex-col space-y-1 w-full">
+              <Link
+                to="/courses"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
               >
-                <CreditCard className="mr-2 h-4 w-4" />
-                Instructor Dashboard
-              </Button>
-            </SheetClose>
-          </SheetFooter>
+                <Compass size={20} className="text-blue-600 dark:text-blue-400" />
+                <span className="font-medium">Explore Courses</span>
+              </Link>
+              <Link
+                to="/myLearning"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
+              >
+                <BookOpen size={20} className="text-blue-600 dark:text-blue-400" />
+                <span className="font-medium">My Learning</span>
+              </Link>
+              <Link
+                to="/profile"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
+              >
+                <UserCircle
+                  size={20}
+                  className="text-blue-600 dark:text-blue-400"
+                />
+                <span className="font-medium">Profile</span>
+              </Link>
+              <button
+                onClick={logoutHandler}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors w-full text-left"
+              >
+                <LogOut size={20} className="text-blue-600 dark:text-blue-400" />
+                <span className="font-medium">Logout</span>
+              </button>
+            </nav>
+
+            {user?.accountType === "Instructor" && (
+              <SheetFooter className="mt-auto mb-6">
+                <SheetClose asChild>
+                  <Button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <Link to="/admin/dashboard">Instructor Dashboard</Link>
+                  </Button>
+                </SheetClose>
+              </SheetFooter>
+            )}
+          </>
+        ) : (
+          <div className="flex flex-col space-y-4">
+            <p className="text-center text-gray-600 dark:text-gray-400">
+              Please log in to access your account
+            </p>
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">
+              <Link to="/login">Login/SignUp</Link>
+            </Button>
+          </div>
         )}
       </SheetContent>
     </Sheet>
