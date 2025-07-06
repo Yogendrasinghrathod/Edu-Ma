@@ -1,4 +1,3 @@
-
 const Razorpay = require("razorpay");
 const Course = require("../models/CourseSchema");
 const PurchaseCourse = require("../models/PurchaseCourse.model");
@@ -569,20 +568,19 @@ exports.getCourseDetailsWithPurchaseStatus = async (req, res) => {
   }
 };
 
-exports.getAllPurchasedCourses = async (_, res) => {
+exports.getAllPurchasedCourses = async (req, res) => {
   try {
-    // const userId = req.id;
-    
-    // console.log("🔍 Getting all purchased courses for userId:", userId);
+    const instructorId = req.id; // The logged-in instructor's user ID
 
-    const purchasedCourses = await PurchaseCourse.find({ 
-      // userId: userId, 
-      status: "completed" 
-    })
-      .populate("courseId")
-      // .populate({ path: "userId" });
+    // Find all courses created by this instructor
+    const instructorCourses = await Course.find({ creator: instructorId }).select('_id');
+    const courseIds = instructorCourses.map(course => course._id);
 
-    // console.log("✅ Found", purchasedCourses.length, "purchased courses");
+    // Find all purchases for these courses
+    const purchasedCourses = await PurchaseCourse.find({
+      courseId: { $in: courseIds },
+      status: "completed"
+    }).populate("courseId");
 
     return res.status(200).json({
       success: true,
