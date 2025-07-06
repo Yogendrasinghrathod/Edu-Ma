@@ -5,7 +5,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Course = ({course}) => {
-  console.log(course);
+  // console.log(course);
   
   return (
     <Link to={`course-detail/${course._id}`}>

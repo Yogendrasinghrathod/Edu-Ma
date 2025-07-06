@@ -29,7 +29,7 @@ export const checkEnvironmentVariables = () => {
   return missingVars.length === 0;
 };
 
-// Auto-run in development
-if (import.meta.env.DEV) {
-  checkEnvironmentVariables();
-} 
+// Auto-run in development - disabled for now
+// if (import.meta.env.DEV) {
+//   checkEnvironmentVariables();
+// } 

@@ -12,8 +12,9 @@ const appStore = configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(authApi.middleware,courseApi.middleware,purchaseApi.middleware,courseProgressApi.middleware)
 });
 
-const initializeApp=async()=>{
-  await appStore.dispatch(authApi.endpoints.loadUser.initiate({},{forceRefetch:true}))
-}
-initializeApp();
+// Comment out auto-load for development - uncomment when you want to test auth
+// const initializeApp=async()=>{
+//   await appStore.dispatch(authApi.endpoints.loadUser.initiate({},{forceRefetch:true}))
+// }
+// initializeApp();
 export default appStore;  // Change to default export

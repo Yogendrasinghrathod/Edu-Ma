@@ -28,12 +28,17 @@ const CreateLecture = () => {
   } = useGetCourseLectureQuery(courseId);
 
   const createLectureHandler = async () => {
+    if (!lectureTitle.trim()) {
+      toast.error("Lecture title is required");
+      return;
+    }
     await createLecture({ lectureTitle, courseId: courseId });
   };
 
   useEffect(() => {
     if (isSuccess) {
       toast.success(data.message);
+      setLectureTitle(""); // Clear the input after successful creation
       refetch();
     }
     if (error) {
@@ -92,7 +97,7 @@ const CreateLecture = () => {
             <p>Loading lecture</p>
           ) : lectureError ? (
             <p>Failed to Load Lecture</p>
-          ) : lectureData.length == 0 ? (
+          ) : !lectureData?.lectures || lectureData.lectures.length === 0 ? (
             <p>No lecture Found</p>
           ) : (
             lectureData.lectures.map((lecture, index) => {

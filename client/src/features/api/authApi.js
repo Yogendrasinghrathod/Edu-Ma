@@ -19,7 +19,7 @@ export const authApi = createApi({
       async onQueryStarted(_,{queryFulfilled,dispatch}){
         try{
           const result=await queryFulfilled;
-          dispatch(userLoggedIn({user:result.data.user}));
+          dispatch(userLoggedIn({user:result.data.user, token:result.data.token}));
         }
         catch(error){
           console.log(error);
@@ -59,10 +59,15 @@ export const authApi = createApi({
       async onQueryStarted(_,{queryFulfilled,dispatch}){
         try{
           const result=await queryFulfilled;
-          dispatch(userLoggedIn({user:result.data.user}));
+          dispatch(userLoggedIn({user:result.data.user, token:result.data.token}));
         }
         catch(error){
-          console.log(error);
+          // Silently handle 401 errors (user not logged in)
+          if (error?.error?.status === 401) {
+            console.log("User not authenticated - this is normal for new visitors");
+          } else {
+            console.log("Auth error:", error);
+          }
         }
       }
     }),

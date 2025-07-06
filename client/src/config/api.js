@@ -10,7 +10,7 @@ export const PROFILE_API = `${API_BASE_URL}/profile`;
 
 // Firebase Configuration
 export const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC220cCAFaXZ9jgdxhP_kZjT0Nax5uYn1c",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "eduma-4e8e7.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "eduma-4e8e7",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "eduma-4e8e7.firebasestorage.app",
@@ -32,16 +32,16 @@ const validateFirebaseConfig = () => {
   return missingFields.length === 0;
 };
 
-// Log configuration status
-if (import.meta.env.DEV) {
-  console.log('🔥 Firebase Config Status:', {
-    apiKey: firebaseConfig.apiKey ? '✅ Set' : '❌ Missing',
-    authDomain: firebaseConfig.authDomain ? '✅ Set' : '❌ Missing',
-    projectId: firebaseConfig.projectId ? '✅ Set' : '❌ Missing',
-    storageBucket: firebaseConfig.storageBucket ? '✅ Set' : '❌ Missing',
-    messagingSenderId: firebaseConfig.messagingSenderId ? '✅ Set' : '❌ Missing',
-    appId: firebaseConfig.appId ? '✅ Set' : '❌ Missing',
-  });
-  
-  validateFirebaseConfig();
-} 
+// Log configuration status - disabled for now
+// if (import.meta.env.DEV) {
+//   console.log('🔥 Firebase Config Status:', {
+//     apiKey: firebaseConfig.apiKey ? '✅ Set' : '❌ Missing',
+//     authDomain: firebaseConfig.authDomain ? '✅ Set' : '❌ Missing',
+//     projectId: firebaseConfig.projectId ? '✅ Set' : '❌ Missing',
+//     storageBucket: firebaseConfig.storageBucket ? '✅ Set' : '❌ Missing',
+//     messagingSenderId: firebaseConfig.messagingSenderId ? '✅ Set' : '❌ Missing',
+//     appId: firebaseConfig.appId ? '✅ Set' : '❌ Missing',
+//   });
+//   
+//   validateFirebaseConfig();
+// } 

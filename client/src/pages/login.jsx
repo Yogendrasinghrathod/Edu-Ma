@@ -120,6 +120,8 @@ const Login = () => {
         dispatch(userLoggedIn({ user: data.user, token: data.token }));
         toast.success(data.message || "Logged in successfully!");
         navigate("/");
+        // Force a page reload to ensure Redux state is properly synchronized
+        window.location.reload();
       } else {
         // This else block might not be necessary if signInWithGoogle throws errors, but it's good for safety.
         console.error("❌ Google Sign-In failed:", data?.message);

@@ -4,17 +4,22 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 // Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyC220cCAFaXZ9jgdxhP_kZjT0Nax5uYn1c",
-  authDomain: "eduma-4e8e7.firebaseapp.com",
-  projectId: "eduma-4e8e7",
-  storageBucket: "eduma-4e8e7.firebasestorage.app",
-  messagingSenderId: "262228908128",
-  appId: "YOUR_APP_ID", // Please get this from your Firebase project settings
-  measurementId: "YOUR_MEASUREMENT_ID", // Please get this from your Firebase project settings
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC220cCAFaXZ9jgdxhP_kZjT0Nax5uYn1c",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "eduma-4e8e7.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "eduma-4e8e7",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "eduma-4e8e7.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "262228908128",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:262228908128:web:YOUR_APP_ID",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "",
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+
+// Configure Google Auth Provider to prevent COOP warnings
+provider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 export const signInWithGoogle = async () => {
   try {
@@ -29,7 +34,7 @@ export const signInWithGoogle = async () => {
       photoURL: result.user.photoURL
     });
 
-    const response = await fetch("http://localhost:5001/api/v1/auth/firebase-signup", {
+    const response = await fetch(import.meta.env.VITE_FIREBASE_Res, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

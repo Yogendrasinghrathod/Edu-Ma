@@ -38,8 +38,7 @@ const Filter = ({ handleFilterChange }) => {
       // console.log(prevCategories);
       
       const newCategories = prevCategories.includes(categoryId)
-        ? prevCategories.filter((id) => {id !== categoryId}
-        )
+        ? prevCategories.filter((id) => id !== categoryId)
         : [...prevCategories, categoryId];
 
         // console.log(newCategories);
@@ -75,7 +74,7 @@ const Filter = ({ handleFilterChange }) => {
       <div>
         <h1 className="font-semibold mb-2  flex md:flex-row gap-4">CATEGORY</h1>
         {categories.map((category) => (
-          <div className="flex items-center space-x-2 my-2">
+          <div key={category.id} className="flex items-center space-x-2 my-2">
             <Checkbox
               id={category.id}
               // categories={category.id}

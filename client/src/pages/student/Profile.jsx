@@ -63,9 +63,12 @@ const Profile = () => {
     return <h1>Profile Loading</h1>
   }
   
-  
+  // Add additional check for user data
+  if(!data || !data.user){
+    return <h1>User data not available</h1>
+  }
 
-  const user=data && data.user;
+  const user=data.user;
  
   return (
     <div className="min-h-screen dark:bg-black ">
@@ -75,7 +78,7 @@ const Profile = () => {
           <div className="flex flex-col items-center">
             <Avatar className="h-32 w-32 ring-4 ring-white dark:ring-gray-800 rounded-full">
               <AvatarImage
-                src={user.profilePhoto || "https://github.com/shadcn.png"}
+                src={user?.profilePhoto || "https://github.com/shadcn.png"}
                 className="rounded-full"
               />
               <AvatarFallback>
@@ -89,7 +92,7 @@ const Profile = () => {
               <h1 className="font-semibold text-gray-900 dark:text-gray-400">
                 Name :{" "}
                 <span className="font-normal text-gray-700 dark:text-gray-500">
-                  {user.name}{" "}
+                  {user?.name || "N/A"}{" "}
                 </span>{" "}
               </h1>
             </div>
@@ -98,7 +101,7 @@ const Profile = () => {
               <h1 className="font-semibold text-gray-900 dark:text-gray-400">
                 Email :{" "}
                 <span className="font-normal text-gray-700 dark:text-gray-500">
-                  {user.email}
+                  {user?.email || "N/A"}
                 </span>{" "}
               </h1>
             </div>
@@ -107,7 +110,7 @@ const Profile = () => {
               <h1 className="font-semibold text-gray-900 dark:text-gray-400">
                 Role :{" "}
                 <span className="font-normal text-gray-700 dark:text-gray-500">
-                  {user.accountType.toUpperCase()}{" "}
+                  {user?.accountType?.toUpperCase() || "N/A"}{" "}
                 </span>{" "}
               </h1>
             </div>
@@ -180,7 +183,7 @@ const Profile = () => {
         <h1 className="font-medium text-lg text-center">Enrolled Courses</h1>
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5"> */}
           {
-            !user.enrolledCourses || user.enrolledCourses.length===0? (
+            !user?.enrolledCourses || user.enrolledCourses.length===0? (
               <h1 className="text-center"> No course enrolled by you yet </h1>
             ):(
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5">

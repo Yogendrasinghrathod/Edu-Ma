@@ -12,6 +12,7 @@ const config = require("../config/config");
 
 const logout = async (req, res) => {
   try {
+    // res.clearCookie();
     return res.status(200).cookie("token", "", { maxAge: 0 }).json({
       msg: "Logged out successfully",
       success: true,
@@ -271,8 +272,8 @@ const firebaseSignup = async (req, res) => {
       // User exists, generate JWT token and return
       const token = jwt.sign(
         { id: existingUser._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        config.JWT_SECRET,
+        { expiresIn: config.JWT_EXPIRE }
       );
 
       existingUser.password = undefined;
@@ -308,8 +309,8 @@ const firebaseSignup = async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { id: newUser._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      config.JWT_SECRET,
+      { expiresIn: config.JWT_EXPIRE }
     );
 
     newUser.password = undefined;

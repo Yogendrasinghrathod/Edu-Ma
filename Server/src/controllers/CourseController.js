@@ -10,7 +10,7 @@ const {
 
 mailSender = require("../utils/mailSender");
 // const { courseEnrollmentEmail } = require("../mail/courseEnrollmentEmail");
-const { Lecture } = require("../models/lectureSchema");
+const Lecture = require("../models/lectureSchema");
 
 exports.createCourse = async (req, res) => {
   try {
