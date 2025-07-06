@@ -14,7 +14,7 @@ async function testVerification() {
     console.log("🧪 Testing payment verification endpoint...");
     console.log("Test data:", testData);
     
-    const response = await axios.post('http://localhost:5001/api/v1/purchase/verify-payment', testData, {
+    const response = await axios.post('https://edu-ma.onrender.com/api/v1/purchase/verify-payment', testData, {
       headers: {
         'Content-Type': 'application/json',
         'Cookie': 'token=your_test_token_here' // You'll need to replace this with a valid token
@@ -35,7 +35,7 @@ async function testPaymentStatus() {
   try {
     console.log("🧪 Testing payment status endpoint...");
     
-    const response = await axios.get(`http://localhost:5001/api/v1/purchase/payment-status/${testData.orderId}`, {
+    const response = await axios.get(`https://edu-ma.onrender.com/api/v1/purchase/payment-status/${testData.orderId}`, {
       headers: {
         'Cookie': 'token=your_test_token_here' // You'll need to replace this with a valid token
       }

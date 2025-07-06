@@ -22,7 +22,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 // import { use } from "react";
 
-const MEDIA_API = "http://localhost:5001/api/v1/media";
+const MEDIA_API = "https://edu-ma.onrender.com/api/v1/media";
 
 const LectureTab = () => {
   const navigate = useNavigate();

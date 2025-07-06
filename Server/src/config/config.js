@@ -9,7 +9,7 @@ const config = {
   MONGODB_URL: process.env.MONGODB_URL,
   
   // CORS Configuration
-  CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
+  CLIENT_URL: process.env.CLIENT_URL || "https://edu-ma.netlify.app",
   
   // Firebase Configuration
   FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
@@ -39,7 +39,7 @@ const config = {
   
   // Application URLs
   FRONTEND_URL: process.env.FRONTEND_URL || 'https://studynotion-edtech-project.vercel.app',
-  API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:5001/api/v1',
+  API_BASE_URL: process.env.API_BASE_URL || 'https://edu-ma.netlify.app/api/v1',
   
   // External Services
   DICEBEAR_API_URL: process.env.DICEBEAR_API_URL || 'https://api.dicebear.com/5.x/initials/svg',

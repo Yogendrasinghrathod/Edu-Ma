@@ -33,7 +33,7 @@ console.log("Generated signature:", signature);
 // Send test webhook
 async function testWebhook() {
   try {
-    const response = await axios.post('http://localhost:5001/api/v1/purchase/webhook', payloadString, {
+    const response = await axios.post('https://edu-ma.onrender.com/api/v1/purchase/webhook', payloadString, {
       headers: {
         'Content-Type': 'application/json',
         'x-razorpay-signature': signature
