@@ -150,8 +150,8 @@ const login = async (req, res) => {
     return res
       .cookie("token", token, {
         httpOnly: true,
-        secure: true, // Only secure in production
-        sameSite: "strict",
+        secure: true, 
+        sameSite: "none",
         maxAge: 24 * 60 * 60 * 1000, // 3 days
       })
       .status(200)
@@ -170,81 +170,9 @@ const login = async (req, res) => {
   }
 };
 
-//change Password
 
-const changePassword = (req, res) => {
-  // Find user by ID
-  User.findById(req.user.id)
-    .then((userDetails) => {
-      if (!userDetails) {
-        throw new Error("User not found");
-      }
 
-      // Extract oldPassword and newPassword from req.body
-      const { oldPassword, newPassword } = req.body;
 
-      // Validate old password
-      return bcrypt
-        .compare(oldPassword, userDetails.password)
-
-        .then((isPasswordMatch) => {
-          if (!isPasswordMatch) {
-            res.status(401).json({
-              success: false,
-              message: "The password is incorrect",
-            });
-            return Promise.reject("Password incorrect");
-          }
-
-          // Encrypt the new password
-          return bcrypt.hash(newPassword, 10).then((encryptedPassword) => {
-            return User.findByIdAndUpdate(
-              req.user.id,
-              { password: encryptedPassword },
-              { new: true }
-            );
-          });
-        });
-    })
-    .then((updatedUserDetails) => {
-      if (!updatedUserDetails) {
-        return; // Stop if previous response was sent
-      }
-
-      // Send notification email
-      return mailSender(
-        updatedUserDetails.email,
-        "Password for your account has been updated",
-        `Password updated successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`
-      )
-        .then((emailResponse) => {
-          console.log("Email sent successfully:", emailResponse.response);
-          res.status(200).json({
-            success: true,
-            message: "Password updated successfully",
-          });
-        })
-        .catch((error) => {
-          console.error("Error occurred while sending email:", error);
-          res.status(500).json({
-            success: false,
-            message: "Error occurred while sending email",
-            error: error.message,
-          });
-        });
-    })
-    .catch((error) => {
-      // Only send error response if no response has been sent yet
-      if (!res.headersSent) {
-        console.error("Error occurred while updating password:", error);
-        res.status(500).json({
-          success: false,
-          message: "Error occurred while updating the password",
-          error: error.message,
-        });
-      }
-    });
-};
 
 // Firebase signup function
 const firebaseSignup = async (req, res) => {
@@ -282,7 +210,7 @@ const firebaseSignup = async (req, res) => {
         .cookie("token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
           maxAge: 24 * 60 * 60 * 1000,
         })
         .status(200)
@@ -319,7 +247,7 @@ const firebaseSignup = async (req, res) => {
       .cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
         maxAge: 24 * 60 * 60 * 1000,
       })
       .status(201)
@@ -378,7 +306,6 @@ const testFirebase = async (req, res) => {
 module.exports = { 
   signup, 
   login, 
-  changePassword, 
   logout, 
   firebaseSignup, 
   testFirebase 
