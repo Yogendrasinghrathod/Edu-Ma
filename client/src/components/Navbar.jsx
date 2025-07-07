@@ -146,9 +146,11 @@ const Navbar=()=>{
       {/* Mobile device */}
       <div className="md:hidden flex items-center justify-between px-6 h-full">
         <div className="flex items-center gap-2">
-          <h1 className="font-extrabold text-xl">
-            Edu-<span className="text-blue-600 dark:text-blue-400">Ma</span>
-          </h1>
+          <Link to="/" className="group">
+            <h1 className={location.pathname === "/login"? "hidden md:block font-extrabold text-2xl dark:text-blue-200 group-hover:text-blue-600 text-blue-600 dark:group-hover:text-blue-400 transition-colors":"hidden md:block font-extrabold text-2xl dark:text-blue-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"}>
+              Edu-<span className="text-blue-600 dark:text-blue-400">Ma</span>
+            </h1>
+          </Link>
         </div>
         <MobileNavbar />
       </div>
@@ -180,7 +182,7 @@ const MobileNavbar = () => {
         {user ? (
           <Avatar className="cursor-pointer h-10 w-10 rounded-full border-2 border-blue-500 hover:border-blue-400 transition-all">
             <AvatarImage src={user.profilePhoto || "https://github.com/shadcn.png"} />
-            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white ">
               {user.name ? user.name.substring(0, 2).toUpperCase() : "ED"}
             </AvatarFallback>
           </Avatar>
@@ -212,14 +214,7 @@ const MobileNavbar = () => {
 
         {user ? (
           <>
-            <nav className="flex flex-col space-y-1 w-full">
-              <Link
-                to="/courses"
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
-              >
-                <Compass size={20} className="text-blue-600 dark:text-blue-400" />
-                <span className="font-medium">Explore Courses</span>
-              </Link>
+            <nav className="flex flex-col space-y-1 w-full dark:text-white ">
               <Link
                 to="/myLearning"
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
