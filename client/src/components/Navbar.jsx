@@ -146,11 +146,9 @@ const Navbar=()=>{
       {/* Mobile device */}
       <div className="md:hidden flex items-center justify-between px-6 h-full">
         <div className="flex items-center gap-2">
-          <Link to="/" className="group">
-            <h1 className={location.pathname === "/login"? "hidden md:block font-extrabold text-2xl dark:text-blue-200 group-hover:text-blue-600 text-blue-600 dark:group-hover:text-blue-400 transition-colors":"hidden md:block font-extrabold text-2xl dark:text-blue-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"}>
-              Edu-<span className="text-blue-600 dark:text-blue-400">Ma</span>
-            </h1>
-          </Link>
+          <h1 className="font-extrabold text-xl">
+            Edu-<span className="text-blue-600 dark:text-blue-400">Ma</span>
+          </h1>
         </div>
         <MobileNavbar />
       </div>
