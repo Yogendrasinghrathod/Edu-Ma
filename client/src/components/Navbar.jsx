@@ -212,7 +212,8 @@ const MobileNavbar = () => {
 
         {user ? (
           <>
-            <nav className="flex flex-col space-y-1 w-full dark:text-white ">
+            <nav className="flex flex-col space-y-1 w-full dark:text-white dark:hover:to-blue-600">
+               
               <Link
                 to="/myLearning"
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
