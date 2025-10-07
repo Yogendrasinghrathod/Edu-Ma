@@ -10,7 +10,7 @@ import { useLoadUserQuery } from "./features/api/authApi";
 import LoadingSpinner from "./components/LoadingSpinner";
 import "./utils/envCheck"; // Check environment variables on startup
 
-const Custom = ({ children }) => {
+const Custom = (children ) => {
   const token = localStorage.getItem('token');
   // Only fetch user if a token exists
   const { isLoading } = useLoadUserQuery(undefined, { skip: !token });
