@@ -31,6 +31,19 @@ export const courseProgressApi = createApi({
                 url: `${courseId}/incomplete`, 
                 method: "POST",
             })
+        }),
+        getLectureNote: builder.query({
+            query: ({ courseId, lectureId }) => ({
+                url: `${courseId}/lecture/${lectureId}/note`,
+                method: "GET",
+            })
+        }),
+        upsertLectureNote: builder.mutation({
+            query: ({ courseId, lectureId, content }) => ({
+                url: `${courseId}/lecture/${lectureId}/note`,
+                method: "POST",
+                body: { content },
+            })
         })
     })
 })
@@ -40,4 +53,6 @@ export const {
     useUpdateLectureProgressMutation,
     useCompleteCourseMutation,
     useInCompleteCourseMutation,
+    useGetLectureNoteQuery,
+    useUpsertLectureNoteMutation,
 } = courseProgressApi;

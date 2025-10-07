@@ -1,7 +1,6 @@
 import "./App.css";
 // import {Button} from './components/ui/button'
 import Login from "./pages/login";
-import Navbar from "./components/Navbar";
 import HeroSection from "./pages/student/HeroSection";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
@@ -18,11 +17,7 @@ import EditLecture from "./pages/admin/lecture/EditLecture";
 import CourseDetail from "./pages/student/CourseDetail";
 import CourseProgress from "./pages/student/CourseProgress";
 import SearchPage from "./pages/student/SearchPage";
-import {
-  AdminRoute,
-  AuthenticatedUser,
-  ProtectedRoute,
-} from "./components/ProtectedRoute";
+import { AdminRoute, ProtectedRoute } from "./components/ProtectedRoute";
 import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
 // import { LogOut, Sidebar } from "lucide-react";
 

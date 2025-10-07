@@ -26,7 +26,7 @@ const coursePurchaseSchema=new mongoose.Schema({
         required:true
 
     }
-
+    
      
 },{timestamps:true})
 

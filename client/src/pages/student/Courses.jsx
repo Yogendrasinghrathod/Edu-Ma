@@ -1,11 +1,11 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
+ 
 import Course from "./Course";
 import { useGetPublishedCourseQuery } from "@/features/api/courseApi";
 
 
 const Courses = () => {
-  const{ data,isLoading,isSuccess,isError}=useGetPublishedCourseQuery();
+  const{ data,isLoading,isError}=useGetPublishedCourseQuery();
   if(isError){
     <h1>Failed to Load Course</h1>
   }

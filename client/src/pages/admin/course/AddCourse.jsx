@@ -1,11 +1,10 @@
 import { Label } from "@radix-ui/react-dropdown-menu";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -30,25 +29,21 @@ const AddCourse = () => {
 
 
   const createCourseHandler = async () => {
-    // alert("working")
     await createCourse({courseTitle,category});
   };
-//to display msg we use useffect toast
   useEffect(()=>{
     if(isSuccess){
       toast.success(data?.message || "course created successfully")
       navigate("/admin/course")
     }
 
-  },[isSuccess,isError])
+  },[isSuccess,isError,data?.message,navigate])
 
   
   return (
     <div className="flex-1 mx-10">
       <div className="mb-4">
-        <h1 className="font-bold text-xl">
-          Let's add course ,add some basic course details for your new course
-        </h1>
+        <h1 className="font-bold text-xl">Let&apos;s add course ,add some basic course details for your new course</h1>
         <p className="text-sm">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi odit
           velit sequi, consequatur odio totam expedita. Itaque nisi et ipsa!
@@ -76,7 +71,6 @@ const AddCourse = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {/* <SelectLabel>Category</SelectLabel> */}
                 <SelectItem value="Next JS">Next JS</SelectItem>
                 <SelectItem value="Data Science">Data Science</SelectItem>
                 <SelectItem value="HTML">HTML</SelectItem>

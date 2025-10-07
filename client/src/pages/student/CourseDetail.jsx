@@ -11,7 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useGetCourseDetailsWithStatusQuery } from "@/features/api/purchaseApi";
 import { PlayCircle, Lock } from "lucide-react";
-import React from "react";
+ 
 import { useNavigate, useParams } from "react-router-dom";
 import { renderHTML } from "@/lib/htmlUtils";
 
@@ -22,7 +22,7 @@ function CourseDetail() {
   const courseId = params.courseId;
   const navigate=useNavigate();
 
-  const { data, isLoading, error, isSuccess } =
+  const { data, isLoading, error } =
     useGetCourseDetailsWithStatusQuery(courseId);
 
   if (isLoading) {
@@ -92,13 +92,13 @@ function CourseDetail() {
                 {course?.lectures?.map((lecture, idx) => (
                   <div key={idx} className="flex items-center gap-3 text-sm">
                     <span>
-                      {purchased ? (
+                      {purchased || lecture?.isPreviewFree ? (
                         <PlayCircle size={14} />
                       ) : (
                         <Lock size={14} />
                       )}
                     </span>
-                    <p>{lecture.title || `Lecture ${idx + 1}`}</p>
+                    <p>{lecture.lectureTitle || `Lecture ${idx + 1}`}</p>
                   </div>
                 )) ||
                   [1, 2, 3].map((lecture, idx) => (
@@ -120,17 +120,34 @@ function CourseDetail() {
             <Card>
               <CardContent className="p-4 flex flex-col">
                 <div className="w-full aspect-video mb-4 ">
-                  <ReactPlayer
-                    width="100%"
-                    height={"100%"}
-                    url={course.lectures[0].videoUrl}
-                    controls={true}
-                  />
+                  {(() => {
+                    const previewLecture = Array.isArray(course?.lectures)
+                      ? course.lectures.find((lec) => lec?.isPreviewFree)
+                      : null;
+                    const canPreview = Boolean(purchased || previewLecture?.videoUrl);
+                    const previewUrl = purchased
+                      ? course.lectures[0]?.videoUrl
+                      : previewLecture?.videoUrl;
+                    return canPreview ? (
+                      <ReactPlayer
+                        width="100%"
+                        height={"100%"}
+                        url={previewUrl}
+                        controls={true}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded">
+                        <div className="text-center text-sm text-gray-600 dark:text-gray-300">
+                          Preview not available. Purchase to watch.
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <h1>Lecture Title</h1>
                 <Separator className="my-2" />
                 <h1 className="text-lg md:text-xl font-semibold">
-                  {purchased?(<span className="text-blue-800">enrolled</span>): (`₹${course.coursePrice}` || "Course Price")}
+                  {purchased?(<span className="text-blue-800">enrolled</span>): `₹${course.coursePrice}`}
                   
                 </h1>
               </CardContent>

@@ -1,5 +1,6 @@
 const CourseProgress = require("../models/CourseProgress");
 const Course = require("../models/CourseSchema.js");
+const LectureNote = require("../models/LectureNote");
 
 exports.getCourseProgress = async (req, res) => {
   try {
@@ -168,5 +169,35 @@ exports.markAsInCompleted = async (req, res) => {
     return res.status(200).json({message:"Course marked as incompleted  . "})
   } catch (error) {
     console.log(error);
+  }
+};
+
+// Get note for a specific lecture
+exports.getLectureNote = async (req, res) => {
+  try {
+    const { courseId, lectureId } = req.params;
+    const userId = req.id;
+    const note = await LectureNote.findOne({ userId: String(userId), courseId: String(courseId), lectureId: String(lectureId) });
+    return res.status(200).json({ success: true, note: note?.content || "" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to fetch note" });
+  }
+};
+
+// Upsert note for a specific lecture
+exports.upsertLectureNote = async (req, res) => {
+  try {
+    const { courseId, lectureId } = req.params;
+    const userId = req.id;
+    const { content = "" } = req.body || {};
+
+    const note = await LectureNote.findOneAndUpdate(
+      { userId: String(userId), courseId: String(courseId), lectureId: String(lectureId) },
+      { content },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    return res.status(200).json({ success: true, message: "Note saved", note: note.content });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to save note" });
   }
 };

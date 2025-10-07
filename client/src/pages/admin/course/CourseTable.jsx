@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import React from "react";
+ 
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ const CourseTable = () => {
   if (isLoading) {
     return <h1>Loading .... </h1>;
   }
-  console.log("data->", data);
+  
   return (
     <div className="grid gap-y-3">
       <Button

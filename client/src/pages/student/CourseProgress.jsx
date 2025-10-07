@@ -8,7 +8,7 @@ import {
   useUpdateLectureProgressMutation,
 } from "@/features/api/courseProgressApi";
 import { CheckCircle, CheckCircle2, CirclePlay } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -33,17 +33,49 @@ const CourseProgress = () => {
   useEffect(()=>{
     if(completedSuccess){
       refetch();
-      toast.success(markCompleteData.message);
+      toast.success(markCompleteData?.message);
 
     }
     if(inCompletedSuccess){
       refetch();
-      toast.success(markInCompleteData.message);
+      toast.success(markInCompleteData?.message);
     }
 
-  },[completedSuccess,inCompletedSuccess])
+  },[completedSuccess,inCompletedSuccess, refetch, markCompleteData?.message, markInCompleteData?.message])
 
   const [currentLecture, setCurrentLecture] = useState(null);
+  const [noteDraft, setNoteDraft] = useState("");
+
+  // Determine active lecture id using currentLecture or first lecture from data (safe access)
+  const activeLectureId = currentLecture?._id || data?.data?.courseDetails?.lectures?.[0]?._id;
+
+  // Auto-load note content for the current/initial lecture into the textarea
+  useEffect(() => {
+    if (!activeLectureId) return;
+
+    let isCancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/progress/${courseId}/lecture/${activeLectureId}/note`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const data = await res.json();
+        if (!isCancelled) {
+          setNoteDraft(data.note || "");
+        }
+      } catch {
+        if (!isCancelled) {
+          setNoteDraft("");
+        }
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [courseId, activeLectureId]);
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -59,6 +91,8 @@ const CourseProgress = () => {
   //initialize the first lecture if not exist
   const initialLecture =
     currentLecture || (courseDetails.lectures && courseDetails.lectures[0]);
+
+  // activeLectureId handled above before early returns
 
     const isLectureCompleted = (lectureId) => {
       return progress.some((prog) => prog.lectureId === lectureId && prog.viewed);
@@ -138,6 +172,37 @@ const CourseProgress = () => {
               currentLecture?.lectureTitle || initialLecture.lectureTitle
             }`}</h3>
           </div>
+          {/* Notes Section */}
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-2">Your Notes</h3>
+            <textarea
+              className="w-full min-h-[120px] rounded border p-3 bg-white dark:bg-gray-900"
+              placeholder="Write your notes for this lecture..."
+              value={noteDraft}
+              onChange={(e) => setNoteDraft(e.target.value)}
+            />
+            <div className="mt-2 flex gap-2">
+              <Button
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/progress/${courseId}/lecture/${currentLecture?._id || initialLecture._id}/note`, {
+                      method: 'POST',
+                      credentials: 'include',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ content: noteDraft })
+                    });
+                    const data = await res.json();
+                    if (data.success) toast.success('Note saved');
+                    else toast.error(data.message || 'Failed to save note');
+                  } catch {
+                    toast.error('Failed to save note');
+                  }
+                }}
+              >
+                Save Note
+              </Button>
+            </div>
+          </div>
         </div>
         {/* LectureSidebar  */}
         <div className="flex flex-col w-full md:w-2/5 border-t md:border-t-0 md:border-l border-gray-200 md:pl-4 md:pt-0">
@@ -178,6 +243,7 @@ const CourseProgress = () => {
               </Card>
             ))}
           </div>
+          {/* Quiz section removed */}
         </div>
       </div>
     </div>

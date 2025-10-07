@@ -23,7 +23,7 @@ import {
   usePublishCourseMutation,
 } from "@/features/api/courseApi";
 import { Loader2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -46,8 +46,7 @@ const CourseTab = () => {
   const { data: courseByIdData, isLoading: courseByIdLoading,refetch } =
     useGetCourseByIdQuery(courseId);
 
-  const [editCourse, { data, isLoading, isSuccess, error }] =
-    useEditCourseMutation();
+  const [editCourse, { data, isLoading, isSuccess, error: editError }] = useEditCourseMutation();
 
     const[publishCourse]=usePublishCourseMutation();
 
@@ -77,7 +76,6 @@ const CourseTab = () => {
     setInput({ ...input, courseLevel: value });
   };
 
-  //file
   const selectThumbnail = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -91,7 +89,6 @@ const CourseTab = () => {
   };
 
   const updateCourseHandler = async () => {
-    // console.log(input)
     const formData = new FormData();
     formData.append("courseTitle", input.courseTitle);
     formData.append("subTitle", input.subTitle);
@@ -111,7 +108,7 @@ const CourseTab = () => {
         refetch();
       }
       
-    } catch (error) {
+    } catch {
       toast.error("Failed to Publish Course")
       
     }
@@ -119,14 +116,12 @@ const CourseTab = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success(data.message || "Updated data Successfully");
+      toast.success(data?.message || "Updated data Successfully");
     }
-    if (error) {
-      toast.error(
-        error?.data?.message || error?.message || "An error occurred"
-      );
+    if (editError) {
+      toast.error(editError.data?.message || "An error occurred");
     }
-  }, [isSuccess, error]);
+  }, [isSuccess, data?.message, editError]);
 
   if (courseByIdLoading) {
     return <Loader2 className="h-4 w-4 animate-spin" />;

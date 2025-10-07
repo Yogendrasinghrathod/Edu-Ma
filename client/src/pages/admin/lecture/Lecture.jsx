@@ -1,11 +1,11 @@
 import { Edit } from 'lucide-react';
-import React from 'react'
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom'
 
-const Lecture = ({lecture,courseId,index}) => {
+const Lecture = ({ lecture, courseId, index }) => {
 
     const navigate=useNavigate();
-    // console.log(courseId)
+    
 
 
     const goToUpdateLecture=()=>{
@@ -23,3 +23,12 @@ const Lecture = ({lecture,courseId,index}) => {
 }
 
 export default Lecture
+
+Lecture.propTypes = {
+  lecture: PropTypes.shape({
+    _id: PropTypes.string,
+    lectureTitle: PropTypes.string,
+  }).isRequired,
+  courseId: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+}

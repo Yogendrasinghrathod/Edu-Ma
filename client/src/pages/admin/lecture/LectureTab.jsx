@@ -16,13 +16,13 @@ import {
   useRemoveLectureMutation,
 } from "@/features/api/courseApi";
 import axios from "axios";
-import { Loader2, Trophy } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-// import { use } from "react";
+import { API_BASE_URL } from "@/config/api";
 
-const MEDIA_API = "https://edu-ma.onrender.com/api/v1/media";
+const MEDIA_API = `${API_BASE_URL}/media`;
 
 const LectureTab = () => {
   const navigate = useNavigate();
@@ -37,26 +37,18 @@ const LectureTab = () => {
 
   
 
-  const [editLecture, { data, isLoading, error, isSuccess }] =
-    useEditLectureMutation();
-
-  const [
-    removeLecture,
-    { data: removeData, isLoading: removeLoading, isSuccess: removeSuccess },
-  ] = useRemoveLectureMutation();
+  const [editLecture, { data, isLoading, isSuccess, error: editError }] = useEditLectureMutation();
+  const [removeLecture, { data: removeData, isLoading: removeLoading, isSuccess: removeSuccess }] = useRemoveLectureMutation();
 
   const { data:lectureData } = useGetLectureByIdQuery(lectureId);
-
-  console.log(lectureData)
 
   const lecture = lectureData?.lecture;
   useEffect(() => {
     if (lecture) {
-      // console.log(lecture);
-      
       setLectureTitle(lecture.lectureTitle);
       setIsFree(lecture.isPreviewFree);
       setUploadVideoInfo(lecture.videoInfo);
+      setBtnDisable(false);
     }
   }, [lecture]);
 
@@ -73,14 +65,14 @@ const LectureTab = () => {
           onUploadProgress: (progressEvent) => {
             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
             setUploadProgress(percentCompleted);
-            console.log(`Upload Progress: ${percentCompleted}%`);
+            
           },
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
         if (res.data.success) {
-          console.log("Video response->", res.data.data);
+          
           setUploadVideoInfo({
             videoUrl: res.data.data.url,
             publicId: res.data.data.public_id,
@@ -88,8 +80,7 @@ const LectureTab = () => {
           setBtnDisable(false);
           toast.success(res.data.message);
         }
-      } catch (error) {
-        console.log(error);
+      } catch {
         toast.error("video upload failed");
         setBtnDisable(true);
       } finally {
@@ -99,20 +90,17 @@ const LectureTab = () => {
   };
 
   const editLectureHandler = async () => {
-    if (!lectureTitle.trim()) {
-      toast.error("Lecture title is required");
-      return;
-    }
-
     try {
-      await editLecture({
-        courseId,
-        lectureId,
-        lectureTitle,
-        videoInfo: uploadVideoInfo,
-        isPreviewFree: isFree,
-      });
-    } catch (error) {
+      const payload = { courseId, lectureId, isPreviewFree: isFree };
+      if (lectureTitle && lectureTitle.trim()) {
+        payload.lectureTitle = lectureTitle.trim();
+      }
+      if (uploadVideoInfo && uploadVideoInfo.videoUrl && uploadVideoInfo.publicId) {
+        payload.videoInfo = uploadVideoInfo;
+      }
+
+      await editLecture(payload);
+    } catch {
       toast.error("Failed to update lecture");
     }
   };
@@ -125,10 +113,10 @@ const LectureTab = () => {
     if (isSuccess) {
       toast.success(data.message);
     }
-    if (error) {
-      toast.error(error.data.message);
+    if (editError) {
+      toast.error(editError.data?.message || 'Update failed');
     }
-  }, [isSuccess, error]);
+  }, [isSuccess, data?.message, editError]);
 
   useEffect(() => {
     if (removeSuccess) {
@@ -139,7 +127,7 @@ const LectureTab = () => {
     // if (error) {
     //   toast.error(error.removeData.message);
     // }
-  }, [removeSuccess]);
+  }, [removeSuccess, navigate, removeData?.message, courseId]);
 
   return (
     <Card className="dark:bg-gray-700">
@@ -159,7 +147,7 @@ const LectureTab = () => {
               {removeLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  "Please Wait"
+                  Please Wait
                 </>
               ) : (
                 "Remove Lecture "
@@ -214,12 +202,12 @@ const LectureTab = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  "Please Wait"
+                  Please Wait
                 </>
               ) : mediaProgress ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  "Uploading Video..."
+                  Uploading Video...
                 </>
               ) : (
                 "Update lecture"

@@ -10,8 +10,8 @@ router.post("/upload-video",upload.single("file"),async(req,res)=>{
         console.log("File received:", req.file);
         console.log("Cloudinary config:", {
             cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY ? "Set" : "Not Set",
-            api_secret: process.env.CLOUDINARY_API_SECRET ? "Set" : "Not Set"
+            api_key: process.env.CLOUDINARY_API_KEY ,
+            api_secret: process.env.CLOUDINARY_API_SECRET 
         });
         
         const result = await uploadMedia(req.file.path);

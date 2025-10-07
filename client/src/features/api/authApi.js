@@ -40,9 +40,8 @@ export const authApi = createApi({
         url: "/auth/logout",
         method: "POST",
       }),
-      async onQueryStarted(_,{queryFulfilled,dispatch}){
+      async onQueryStarted(_,{dispatch}){
         try{
-          
           dispatch(userLoggedOut());
         }
         catch(error){
@@ -62,9 +61,8 @@ export const authApi = createApi({
           dispatch(userLoggedIn({user:result.data.user, token:result.data.token}));
         }
         catch(error){
-          // Silently handle 401 errors (user not logged in)
           if (error?.error?.status === 401) {
-            console.log("User not authenticated - this is normal for new visitors");
+            // unauthenticated; ignore
           } else {
             console.log("Auth error:", error);
           }
