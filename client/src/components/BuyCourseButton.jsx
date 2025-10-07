@@ -1,10 +1,10 @@
-import  { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Button } from "./ui/button";
 import { useCreateCheckoutSessionMutation, useVerifyPaymentMutation } from "@/features/api/purchaseApi";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-const BuyCourseButton = (courseId ) => {
+const BuyCourseButton = ({ courseId }) => {
   const [createCheckoutSession, { data,isLoading ,isError,isSuccess}] =
     useCreateCheckoutSessionMutation();
   
@@ -18,7 +18,7 @@ const BuyCourseButton = (courseId ) => {
     try {
       // console.log("🎉 Payment successful response:", response);
       
-     
+      // Call the verification endpoint
       const verificationData = {
         orderId: response.razorpay_order_id,
         paymentId: response.razorpay_payment_id,
@@ -28,7 +28,7 @@ const BuyCourseButton = (courseId ) => {
       // console.log("📤 Sending verification data:", verificationData);
       
       const result = await verifyPayment(verificationData);
-      console.log("Verification result:", result);
+      // console.log("✅ Verification result:", result);
       
       toast.success("Payment successful ✅");
       // Optionally redirect or refresh the page

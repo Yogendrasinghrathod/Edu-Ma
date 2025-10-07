@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux"
 import { Navigate } from "react-router-dom";
 
-export const ProtectedRoute =(children)=>{
+export const ProtectedRoute =({children})=>{
     const {isAuthenticated}=useSelector(store=>store.authSlice);
 
     if(!isAuthenticated){
@@ -11,7 +11,7 @@ export const ProtectedRoute =(children)=>{
     return children;
 }
 
-export const AuthenticatedUser=(children)=>{
+export const AuthenticatedUser=({children})=>{
     const {isAuthenticated}=useSelector(store=>store.authSlice);
 
     if(!isAuthenticated){ 
@@ -24,7 +24,7 @@ export const AuthenticatedUser=(children)=>{
 
 
 
-export const AdminRoute=(children)=>{
+export const AdminRoute=({children})=>{
     const {isAuthenticated, user}=useSelector(store=>store.authSlice);
 
     if(!isAuthenticated){
