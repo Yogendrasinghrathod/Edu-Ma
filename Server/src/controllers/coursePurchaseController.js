@@ -8,10 +8,21 @@ const Lecture = require("../models/lectureSchema");
 
 const config = require("../config/config");
 
-const razorpay = new Razorpay({
-  key_id: config.RAZORPAY_KEY_ID,
-  key_secret: config.RAZORPAY_KEY_SECRET,
-});
+// Razorpay instance will be created inside the function to ensure config is loaded
+let razorpay;
+const getRazorpayInstance = () => {
+  if (!config.RAZORPAY_KEY_ID || !config.RAZORPAY_KEY_SECRET) {
+    console.error("❌ Razorpay API keys are missing in config");
+    return null;
+  }
+  if (!razorpay) {
+    razorpay = new Razorpay({
+      key_id: config.RAZORPAY_KEY_ID,
+      key_secret: config.RAZORPAY_KEY_SECRET,
+    });
+  }
+  return razorpay;
+};
 
 exports.createCheckoutSession = async (req, res) => {
   try {
@@ -32,7 +43,20 @@ exports.createCheckoutSession = async (req, res) => {
 
     const amountInPaise = Math.round(course.coursePrice * 100);
 
-    const order = await razorpay.orders.create({
+    const instance = getRazorpayInstance();
+    if (!instance) {
+      return res.status(500).json({
+        success: false,
+        message:
+          "Razorpay is not configured. Please check RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET on Render.",
+      });
+    }
+
+    console.log(
+      `[Checkout] Initiating order for course: ${courseId}, user: ${userId}, price: ${course.coursePrice}`,
+    );
+
+    const orderOptions = {
       amount: amountInPaise,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
@@ -40,7 +64,23 @@ exports.createCheckoutSession = async (req, res) => {
         courseId,
         userId,
       },
-    });
+    };
+
+    let order;
+    try {
+      order = await instance.orders.create(orderOptions);
+    } catch (orderError) {
+      console.error("❌ Razorpay order creation failed:", orderError);
+      return res.status(orderError.statusCode || 500).json({
+        success: false,
+        message: "Failed to create Razorpay order",
+        error:
+          orderError.error?.description ||
+          orderError.message ||
+          "Unknown Razorpay error",
+        code: orderError.error?.code,
+      });
+    }
 
     const newPurchase = new PurchaseCourse({
       courseId,
@@ -61,7 +101,7 @@ exports.createCheckoutSession = async (req, res) => {
       key: config.RAZORPAY_KEY_ID,
     });
   } catch (error) {
-    console.error("Razorpay order creation error:", error);
+    console.error("Internal Server Error in createCheckoutSession:", error);
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -86,20 +126,22 @@ exports.razorpayWebhook = async (req, res) => {
     return res.status(400).json({ message: "Missing signature header" });
   }
 
-  let rawBody = req.body;
-  if (typeof rawBody !== "string" && !Buffer.isBuffer(rawBody)) {
-    // If it's an object, re-stringify it (shouldn't happen if middleware is correct)
-    rawBody = Buffer.from(JSON.stringify(rawBody));
-  }
+  // Signature verification MUST use the exact raw body received from Razorpay
+  const body = req.rawBody ? req.rawBody : JSON.stringify(req.body);
 
-  const expectedSignature = require("crypto")
+  const expectedSignature = crypto
     .createHmac("sha256", secret)
-    .update(rawBody)
+    .update(body)
     .digest("hex");
 
   if (receivedSignature !== expectedSignature) {
+    console.error("❌ Webhook signature mismatch!");
+    console.error("Received:", receivedSignature);
+    console.error("Expected:", expectedSignature);
     return res.status(400).json({ message: "Invalid signature" });
   }
+
+  console.log("✅ Webhook signature verified successfully");
 
   let event;
   try {

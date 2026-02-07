@@ -23,8 +23,6 @@ app.use(
   }),
 );
 
-
-
 const PORT = config.PORT;
 const courseProgressRoute = require("./routes/courseProgressRoute.js");
 const authRoutes = require("./routes/User");
@@ -33,8 +31,14 @@ const courseRoute = require("./routes/Course");
 const mediaRoute = require("./routes/MediaRoute");
 const purchaseRoute = require("./routes/purchaseRoute");
 
-// Use JSON parsing for all routes except webhook
-app.use(express.json());
+// Use JSON parsing for all routes, but capture raw body for webhook verification
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    },
+  }),
+);
 
 // Connect to database
 const database = require("./config/database");
