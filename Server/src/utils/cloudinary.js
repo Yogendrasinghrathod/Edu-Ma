@@ -16,7 +16,7 @@ exports.uploadMedia = async (file) => {
     console.log("Cloudinary name:", process.env.CLOUDINARY_CLOUD_NAME);
 
     const uploadResponse = await cloudinary.uploader.upload(file, {
-      resource_type: "auto",
+      resource_type: "video",
     });
     return uploadResponse;
   } catch (error) {
