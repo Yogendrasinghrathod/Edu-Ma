@@ -12,15 +12,13 @@ try {
     });
     auth = admin.auth();
     firebaseInitialized = true;
-    console.log("✅ Firebase Admin SDK initialized successfully.");
+  
   } else {
     // This will be caught by the catch block below
     throw new Error("The service account key is missing required fields (e.g., project_id).");
   }
 } catch (error) {
-  console.error("❌ CRITICAL: Could not initialize Firebase Admin SDK.");
-  console.error("👉 Reason:", error.message);
-  console.error("👉 ACTION: Please ensure a valid 'firebaseServiceAccountKey.json' file exists in the 'Server/src/' directory.");
+  
 
   // Create a dummy auth object that will throw a clear error if used
   auth = {

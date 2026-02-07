@@ -1,4 +1,4 @@
-import {  StrictMode } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
@@ -10,11 +10,17 @@ import { useLoadUserQuery } from "./features/api/authApi";
 import LoadingSpinner from "./components/LoadingSpinner";
 import "./utils/envCheck"; // Check environment variables on startup
 
+import PropTypes from "prop-types";
+
 const Custom = ({ children }) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   // Only fetch user if a token exists
   const { isLoading } = useLoadUserQuery(undefined, { skip: !token });
   return <>{isLoading ? <LoadingSpinner /> : <>{children}</>}</>;
+};
+
+Custom.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 createRoot(document.getElementById("root")).render(
@@ -25,5 +31,5 @@ createRoot(document.getElementById("root")).render(
         <Toaster />
       </Custom>
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );

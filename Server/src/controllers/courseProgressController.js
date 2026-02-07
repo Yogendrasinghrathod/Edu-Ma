@@ -6,13 +6,6 @@ exports.getCourseProgress = async (req, res) => {
   try {
     const { courseId } = req.params;
     const userId = req.id;
-    console.log("UserId:", userId, "CourseId:", courseId);
-    console.log(
-      "UserId type:",
-      typeof userId,
-      "CourseId type:",
-      typeof courseId
-    );
 
     //step1 fetch the userCourse progress
     let courseProgress = await CourseProgress.findOne({
@@ -20,10 +13,7 @@ exports.getCourseProgress = async (req, res) => {
       userId: String(userId),
     }).populate("courseId");
 
-    // console.log("Course progrees :" , courseProgress)
     const courseDetails = await Course.findById(courseId).populate("lectures");
-    // console.log(courseDetails);
-    
 
     if (!courseDetails) {
       return res.status(404).json({
@@ -33,7 +23,6 @@ exports.getCourseProgress = async (req, res) => {
 
     // step2 no progress found return courseDetails with an empty progress
     if (!courseProgress) {
-      // console.log("course Progress i snot her ");
       return res.status(200).json({
         data: {
           courseDetails,
@@ -53,7 +42,9 @@ exports.getCourseProgress = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    return res.status(404).json({
+      message: "Failed to fetch course progress",
+    });
   }
 };
 
@@ -62,7 +53,7 @@ exports.updateLectureProgress = async (req, res) => {
     const { courseId, lectureId } = req.params;
     const userId = req.id;
 
-    // console.log(courseId ,"Course id")
+
 
     //fetch or create courseProgress
     let courseProgress = await CourseProgress.findOne({
@@ -81,7 +72,7 @@ exports.updateLectureProgress = async (req, res) => {
     }
     // find the lecture Progress in courseProgress
     const lectureIndex = courseProgress.lectureProgress.findIndex(
-      (lecture) => String(lecture.lectureId) === String(lectureId)
+      (lecture) => String(lecture.lectureId) === String(lectureId),
     );
     if (lectureIndex !== -1) {
       //if lecture already exist
@@ -96,7 +87,7 @@ exports.updateLectureProgress = async (req, res) => {
 
     // if all lecture is completed   then courseProgress-> true
     const lectureProgressLength = courseProgress.lectureProgress.filter(
-      (lectureProg) => lectureProg.viewed
+      (lectureProg) => lectureProg.viewed,
     ).length;
     const course = await Course.findById(courseId);
     if (course.lectures.length === lectureProgressLength)
@@ -108,7 +99,9 @@ exports.updateLectureProgress = async (req, res) => {
       message: "Lecture progress successfully updated",
     });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      message: "Failed to update lecture progress",
+    });
   }
 };
 
@@ -132,13 +125,15 @@ exports.markAsCompleted = async (req, res) => {
       });
     }
     courseProgress.lectureProgress.map(
-      (lectureProgress) => (lectureProgress.viewed = true)
+      (lectureProgress) => (lectureProgress.viewed = true),
     );
     courseProgress.completed = true;
     await courseProgress.save();
-    return res.status(200).json({message:"Course marked as completed. "})
+    return res.status(200).json({ message: "Course marked as completed. " });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      message: "Failed to mark course as completed",
+    });
   }
 };
 
@@ -162,13 +157,17 @@ exports.markAsInCompleted = async (req, res) => {
       });
     }
     courseProgress.lectureProgress.map(
-      (lectureProgress) => (lectureProgress.viewed = false)
+      (lectureProgress) => (lectureProgress.viewed = false),
     );
     courseProgress.completed = false;
     await courseProgress.save();
-    return res.status(200).json({message:"Course marked as incompleted  . "})
+    return res
+      .status(200)
+      .json({ message: "Course marked as incompleted  . " });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({
+      message: "Failed to mark course as incompleted",
+    });
   }
 };
 
@@ -177,10 +176,16 @@ exports.getLectureNote = async (req, res) => {
   try {
     const { courseId, lectureId } = req.params;
     const userId = req.id;
-    const note = await LectureNote.findOne({ userId: String(userId), courseId: String(courseId), lectureId: String(lectureId) });
+    const note = await LectureNote.findOne({
+      userId: String(userId),
+      courseId: String(courseId),
+      lectureId: String(lectureId),
+    });
     return res.status(200).json({ success: true, note: note?.content || "" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Failed to fetch note" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch note" });
   }
 };
 
@@ -192,12 +197,20 @@ exports.upsertLectureNote = async (req, res) => {
     const { content = "" } = req.body || {};
 
     const note = await LectureNote.findOneAndUpdate(
-      { userId: String(userId), courseId: String(courseId), lectureId: String(lectureId) },
+      {
+        userId: String(userId),
+        courseId: String(courseId),
+        lectureId: String(lectureId),
+      },
       { content },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, new: true, setDefaultsOnInsert: true },
     );
-    return res.status(200).json({ success: true, message: "Note saved", note: note.content });
+    return res
+      .status(200)
+      .json({ success: true, message: "Note saved", note: note.content });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Failed to save note" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to save note" });
   }
 };

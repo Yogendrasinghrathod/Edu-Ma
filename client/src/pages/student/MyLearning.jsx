@@ -1,13 +1,10 @@
-import React from "react";
 import Course from "./Course";
-import { BookOpen, Search, GraduationCap, FolderHeart } from "lucide-react";
-import {  useLoadUserQuery } from "../../features/api/authApi";
-
+import { BookOpen, Search } from "lucide-react";
+import { useLoadUserQuery } from "../../features/api/authApi";
 
 const MyLearning = () => {
-  const {data,isLoading} = useLoadUserQuery()
+  const { data, isLoading } = useLoadUserQuery();
   // const isLoading=true;
-  // console.log(data);
   const myLearningCourses = data?.user.enrolledCourses || [];
 
   return (
@@ -18,7 +15,9 @@ const MyLearning = () => {
           <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
             <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-800" />
           </div>
-          <h1 className="font-bold text-2xl md:text-3xl">My Learning</h1>
+          <h1 className="font-bold text-2xl md:text-3xl text-black dark:text-gray-100">
+            My Learning
+          </h1>
         </div>
 
         {/* Search and Filter */}
@@ -43,7 +42,7 @@ const MyLearning = () => {
       <div className="my-5">
         {isLoading ? (
           <MyLearningSkeleton />
-        ) : myLearningCourses.length === 0 ? (     
+        ) : myLearningCourses.length === 0 ? (
           <p>You are not enrolled in course</p>
         ) : (
           <>
@@ -81,10 +80,12 @@ const MyLearning = () => {
             </div> */}
 
             {/* Courses Grid */}
-            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Your Enrolled Courses</h2>
+            <h2 className="text-xl font-semibold mb-4 text-black dark:text-gray-200">
+              Your Enrolled Courses
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {myLearningCourses.map((course, index) => (
-                <Course key={index}  course={course}/>
+                <Course key={index} course={course} />
               ))}
             </div>
           </>
@@ -107,7 +108,7 @@ const MyLearningSkeleton = () => (
         ></div>
       ))}
     </div>
-    
+
     {/* Skeleton for courses */}
     <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-4 animate-pulse"></div>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -124,20 +125,5 @@ const MyLearningSkeleton = () => (
         </div>
       ))}
     </div>
-  </div>
-);
-
-const EmptyState = () => (
-  <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-    <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-full mb-6">
-      <BookOpen className="h-12 w-12 text-blue-500 dark:text-blue-400" />
-    </div>
-    <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">No Courses Yet</h2>
-    <p className="text-gray-600 dark:text-gray-400 max-w-md mb-6">
-      You're not enrolled in any courses yet. Explore our catalog and start your learning journey today!
-    </p>
-    <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-colors shadow-sm">
-      Browse Courses
-    </button>
   </div>
 );

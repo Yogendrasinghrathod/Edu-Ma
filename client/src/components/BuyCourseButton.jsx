@@ -1,73 +1,86 @@
-import React, { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { Button } from "./ui/button";
-import { useCreateCheckoutSessionMutation, useVerifyPaymentMutation } from "@/features/api/purchaseApi";
+import {
+  useCreateCheckoutSessionMutation,
+  useVerifyPaymentMutation,
+} from "@/features/api/purchaseApi";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { loadRazorpay } from "@/utils/razorpay"; // Import the utility
+import PropTypes from "prop-types";
 
 const BuyCourseButton = ({ courseId }) => {
-  const [createCheckoutSession, { data,isLoading ,isError,isSuccess}] =
+  const [createCheckoutSession, { data, isLoading, isError, isSuccess }] =
     useCreateCheckoutSessionMutation();
-  
-  const [verifyPayment, { isLoading: isVerifying }] = useVerifyPaymentMutation();
+
+  const [verifyPayment, { isLoading: isVerifying }] =
+    useVerifyPaymentMutation();
 
   const purchaseCourseHandler = async () => {
     await createCheckoutSession(courseId);
   };
 
-  const handlePaymentSuccess = async (response) => {
-    try {
-      // console.log("🎉 Payment successful response:", response);
-      
-      // Call the verification endpoint
-      const verificationData = {
-        orderId: response.razorpay_order_id,
-        paymentId: response.razorpay_payment_id,
-        signature: response.razorpay_signature
-      };
-      
-      // console.log("📤 Sending verification data:", verificationData);
-      
-      const result = await verifyPayment(verificationData);
-      // console.log("✅ Verification result:", result);
-      
-      toast.success("Payment successful ✅");
-      // Optionally redirect or refresh the page
-      window.location.reload();
-    } catch (error) {
-      console.error("❌ Payment verification failed:", error);
-      console.error("Error details:", error.data || error.message);
-      toast.error("Payment verification failed. Please contact support.");
-    }
-  };
+  const handlePaymentSuccess = useCallback(
+    async (response) => {
+      try {
+        const verificationData = {
+          orderId: response.razorpay_order_id,
+          paymentId: response.razorpay_payment_id,
+          signature: response.razorpay_signature,
+        };
+        await verifyPayment(verificationData);
+        toast.success("Payment successful ✅");
+        // Optionally redirect or refresh the page
+        window.location.reload();
+      } catch (_error) {
+        toast.error(
+          "Payment verification failed. Please contact support.",
+          _error,
+        );
+      }
+    },
+    [verifyPayment],
+  );
 
   useEffect(() => {
-  if (isSuccess) {
-    if (data?.orderId) {
-      if (window.Razorpay) {
-        const options = {
-          key:  data.key,
-          amount: data.amount,
-          currency: data.currency,
-          name: data.courseTitle,
-          order_id: data.orderId,
-          handler: handlePaymentSuccess,
-          theme: { color: "black" },
-        };
+    const initiatePayment = async () => {
+      if (isSuccess && data?.orderId) {
+        const isLoaded = await loadRazorpay(); // Load Razorpay script dynamically
+        if (!isLoaded) {
+          toast.error(
+            "Failed to load Razorpay SDK. Please check your connection.",
+          );
+          return;
+        }
 
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } else {
-        toast.error("Razorpay SDK not loaded. Please refresh and try again.");
+        if (window.Razorpay) {
+          const options = {
+            key: data.key,
+            amount: data.amount,
+            currency: data.currency,
+            name: data.courseTitle,
+            order_id: data.orderId,
+            handler: handlePaymentSuccess,
+            theme: { color: "black" },
+          };
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+        } else {
+          toast.error("Razorpay SDK not loaded correctly.");
+        }
+      } else if (isSuccess && !data?.orderId) {
+        toast.error("Failed to create Razorpay order");
       }
-    } else {
-      toast.error("Failed to create Razorpay order");
-    }
-  }
+    };
 
-  if (isError) {
-    toast.error("Something went wrong during checkout");
-  }
-}, [data, isSuccess, isError]);
+    if (isSuccess) {
+      initiatePayment();
+    }
+
+    if (isError) {
+      toast.error("Something went wrong during checkout");
+    }
+  }, [data, isSuccess, isError, handlePaymentSuccess]);
 
   return (
     <Button
@@ -85,6 +98,10 @@ const BuyCourseButton = ({ courseId }) => {
       )}
     </Button>
   );
+};
+
+BuyCourseButton.propTypes = {
+  courseId: PropTypes.string.isRequired,
 };
 
 export default BuyCourseButton;

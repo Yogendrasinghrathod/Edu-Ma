@@ -29,7 +29,7 @@ exports.createCourse = async (req, res) => {
       creator: req.id,
     });
 
-    // console.log(course);
+    
 
     res.status(200).json({
       course,
@@ -59,7 +59,7 @@ exports.getCreatorCourse = async (req, res) => {
       courses,
     });
   } catch (error) {
-    console.log(error);
+  
     return res.status(500).json({
       success: false,
       message: `Can't Fetch Course Data`,
@@ -71,7 +71,7 @@ exports.getCreatorCourse = async (req, res) => {
 exports.updatedCourse = async (req, res) => {
   try {
     const courseId = req.params.courseId;
-    // console.log(courseId);
+    
 
     const {
       courseTitle,
@@ -97,7 +97,7 @@ exports.updatedCourse = async (req, res) => {
         await deleteMediaFromCloudinary(publicId);
       }
       courseThumbnail = await uploadMedia(thumbnail.path);
-      // console.log(courseThumbnail);
+     
     }
     //upload thumbnail on cloudinary
 
@@ -120,7 +120,7 @@ exports.updatedCourse = async (req, res) => {
       course,
     });
   } catch (error) {
-    console.log(error);
+   
     return res.status(500).json({
       success: false,
       message: `Not able to update`,
@@ -157,12 +157,6 @@ exports.createLecture = async (req, res) => {
     const { lectureTitle } = req.body;
     const { courseId } = req.params;
 
-    console.log(
-      "Received - lectureTitle:",
-      lectureTitle,
-      "courseId:",
-      courseId
-    );
     if (!lectureTitle || !courseId) {
       return res.status(404).json({
         message: "courseId and lectureTitle is Needed",
@@ -170,14 +164,8 @@ exports.createLecture = async (req, res) => {
     }
 
     const lecture = await Lecture.create({ lectureTitle });
-    console.log(lecture);
 
-    //     console.log("courseId:", courseId);
-    // console.log("typeof courseId:", typeof courseId);
     const course = await Course.findById(courseId);
-    // console.log("Course found:", course);
-    // console.log("course.lectures:", course.lectures);
-    // console.log("Type of lectures:", typeof course.lectures);
 
     if (course) {
       course.lectures.push(lecture._id);
@@ -197,9 +185,9 @@ exports.createLecture = async (req, res) => {
 exports.getCourseLecture = async (req, res) => {
   try {
     const { courseId } = req.params;
-    // console.log(courseId)
+
     const course = await Course.findById(courseId).populate("lectures");
-    // console.log(course)
+
     if (!course) {
       return res.status(404).json({
         message: "Course Not Found",
@@ -220,9 +208,9 @@ exports.editLecture = async (req, res) => {
   try {
     const { lectureTitle, videoInfo, isPreviewFree } = req.body;
 
-    // console.log(req.body);
+
     const { courseId, lectureId } = req.params;
-    // console.log(courseId,lectureId);
+
 
     const lecture = await Lecture.findById(lectureId);
     if (!lecture) {
@@ -230,8 +218,6 @@ exports.editLecture = async (req, res) => {
         message: "lecture not Found",
       });
     }
-    // console.log(videoInfo);
-    
 
     //update lecture
     if (lectureTitle) lecture.lectureTitle = lectureTitle;
@@ -241,11 +227,10 @@ exports.editLecture = async (req, res) => {
 
     await lecture.save();
 
-    // console.log(lecture);
 
     //ensuring course still has lecture id if its not already added
     const course = await Course.findById(courseId);
-    // console.log(course);
+ 
 
     if (course && !course.lectures.includes(lecture._id)) {
       course.lectures.push(lectureId);
@@ -383,7 +368,11 @@ exports.searchCourse=async(req,res)=>{
 
 
   } catch (error) {
-    console.log(error);
+     return res.status(404).json({
+      success:false,
+      message:"Failed to search course"
+      
+    })
     
   }
 
@@ -404,7 +393,7 @@ exports.getPublishedCourse = async (_, res) => {
       courses,
     });
   } catch (error) {
-    console.error("🔥 Error in getPublishedCourse:", error); // 🔍 PRINT FULL ERROR
+  
     res.status(500).json({
       message: "Failed to get Published course",
       error: error.message, // ← Very helpful!

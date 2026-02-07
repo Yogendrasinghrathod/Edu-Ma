@@ -42,7 +42,7 @@ exports.resetPasswordToken = async (req , res) => {
             },
             { new: true }
           )
-        // console.log("DETAILS", updatedDetails)
+   
 
         
         //If user exits : generate the link
@@ -65,7 +65,7 @@ exports.resetPasswordToken = async (req , res) => {
 
 
     }catch(error){
-        console.log(error);
+        
         return res.status(500).json({
             error : error.message,
             success : false,
@@ -132,7 +132,7 @@ exports.resetPassword = async (req , res) => {
         })
 
     }catch(error){
-    console.log(error);
+   
     return res.status(500).json({
             error : error.message,
             success : false,

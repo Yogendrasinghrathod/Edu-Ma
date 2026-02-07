@@ -28,8 +28,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const CourseTab = () => {
-  
-
   const navigate = useNavigate();
   const [previewThumbnail, setPreviewThumbnail] = useState("");
   const [input, setInput] = useState({
@@ -43,12 +41,16 @@ const CourseTab = () => {
   });
   const params = useParams();
   const courseId = params.courseId;
-  const { data: courseByIdData, isLoading: courseByIdLoading,refetch } =
-    useGetCourseByIdQuery(courseId);
+  const {
+    data: courseByIdData,
+    isLoading: courseByIdLoading,
+    refetch,
+  } = useGetCourseByIdQuery(courseId);
 
-  const [editCourse, { data, isLoading, isSuccess, error: editError }] = useEditCourseMutation();
+  const [editCourse, { data, isLoading, isSuccess, error: editError }] =
+    useEditCourseMutation();
 
-    const[publishCourse]=usePublishCourseMutation();
+  const [publishCourse] = usePublishCourseMutation();
 
   useEffect(() => {
     if (courseByIdData?.course) {
@@ -100,19 +102,17 @@ const CourseTab = () => {
     await editCourse({ formData, courseId });
   };
 
-  const publishStatusHandler=async(action)=>{
+  const publishStatusHandler = async (action) => {
     try {
-      const response=await publishCourse({courseId,query:action});
-      if(response.data){
+      const response = await publishCourse({ courseId, query: action });
+      if (response.data) {
         toast.success(response.data.message);
         refetch();
       }
-      
     } catch {
-      toast.error("Failed to Publish Course")
-      
+      toast.error("Failed to Publish Course");
     }
-  }
+  };
 
   useEffect(() => {
     if (isSuccess) {
@@ -129,17 +129,27 @@ const CourseTab = () => {
 
   return (
     <div>
-      <Card className="dark:bg-gray-600">
-        <CardHeader className="flex flex-row justify-between dark:bg-gray-600">
+      <Card className="dark:bg-gray-900 dark:border-gray-800">
+        <CardHeader className="flex flex-row justify-between dark:border-b dark:border-gray-800">
           <div className="space-x-2">
-            <CardTitle>Basic Course Information</CardTitle>
-          
-            <CardDescription>
+            <CardTitle className="text-black dark:text-gray-100">
+              Basic Course Information
+            </CardTitle>
+
+            <CardDescription className="text-black dark:text-gray-400">
               Make Changes to Your Courses Here and click Save when Done!
             </CardDescription>
           </div>
           <div className="space-x-2 ">
-            <Button disabled={courseByIdData?.course.lectures.length===0} variant="outline" onClick={()=>publishStatusHandler(courseByIdData?.course.isPublished ? "false":"true")}>
+            <Button
+              disabled={courseByIdData?.course.lectures.length === 0}
+              variant="outline"
+              onClick={() =>
+                publishStatusHandler(
+                  courseByIdData?.course.isPublished ? "false" : "true",
+                )
+              }
+            >
               {courseByIdData?.course.isPublished ? "Unpublish" : "Publish"}
             </Button>
             <Button>Remove Course</Button>
@@ -148,17 +158,18 @@ const CourseTab = () => {
         <CardContent>
           <div className="space-y-4">
             <div>
-              <Label>CourseTitle</Label>
+              <Label className="dark:text-gray-200">CourseTitle</Label>
               <Input
                 type="text"
                 name="courseTitle"
                 value={input.courseTitle}
                 onChange={changeEventHandler}
                 placeholder="Ex . Full Stack Developer"
+                className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
             <div>
-              <Label>SubTitle</Label>
+              <Label className="text-black dark:text-gray-200">SubTitle</Label>
               <Input
                 type="text"
                 name="subTitle"
@@ -168,15 +179,19 @@ const CourseTab = () => {
               />
             </div>
             <div>
-              <Label>Description</Label>
-              <RichTextEditor  input={input} setInput={setInput} />
+              <Label className="text-black dark:text-gray-200">
+                Description
+              </Label>
+              <RichTextEditor input={input} setInput={setInput} />
             </div>
             <div className="flex items-center gap-5">
               <div>
-                <Label>Category</Label>
+                <Label className="text-black dark:text-gray-200">
+                  Category
+                </Label>
                 <Select onValueChange={selectCategory}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a Category"  />
+                    <SelectValue placeholder="Select a Category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -192,7 +207,9 @@ const CourseTab = () => {
                 </Select>
               </div>
               <div>
-                <Label>Course Level</Label>
+                <Label className="text-black dark:text-gray-200">
+                  Course Level
+                </Label>
                 <Select onValueChange={selectCourseLevel}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select Level" />
@@ -207,7 +224,9 @@ const CourseTab = () => {
                 </Select>
               </div>
               <div>
-                <Label>Price (INR)</Label>
+                <Label className="text-black dark:text-gray-200">
+                  Price (INR)
+                </Label>
                 <Input
                   type="Number"
                   name="coursePrice"
@@ -215,12 +234,13 @@ const CourseTab = () => {
                   onChange={changeEventHandler}
                   placeholder="5xx"
                   className="w-fit"
-                  
                 />
               </div>
             </div>
             <div>
-              <Label>Course Thumbnail</Label>
+              <Label className="text-black dark:text-gray-200">
+                Course Thumbnail
+              </Label>
               <Input
                 type="file"
                 onChange={selectThumbnail}
@@ -240,11 +260,14 @@ const CourseTab = () => {
                 variant="outline"
                 onClick={() => navigate("/admin/course")}
                 className="rounded-full"
-               
               >
                 Cancel
               </Button>
-              <Button disabled={isLoading} onClick={updateCourseHandler} className="dark:bg-black dark:text-white rounded-full px-6">
+              <Button
+                disabled={isLoading}
+                onClick={updateCourseHandler}
+                className="dark:bg-blue-600 dark:text-white rounded-full px-6 dark:hover:bg-blue-700"
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
 
 function DarkMode() {
@@ -15,10 +15,10 @@ function DarkMode() {
   useEffect(() => {
     // Update localStorage
     localStorage.setItem("theme", theme);
-    
+
     // Apply theme to document
     const root = window.document.documentElement;
-    
+
     if (theme === "dark") {
       root.classList.add("dark");
     } else {
@@ -32,16 +32,18 @@ function DarkMode() {
   };
 
   return (
-    <button 
+    <button
       onClick={toggleTheme}
       className="relative w-12 h-6 flex items-center rounded-full p-1 bg-slate-200 dark:bg-slate-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-600"
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
       {/* Track */}
       <span className="absolute inset-0 rounded-full transition-colors duration-300 bg-slate-200 dark:bg-slate-700"></span>
-      
+
       {/* Toggle (Circle) */}
-      <span className={`block w-4 h-4 rounded-full transform transition-transform duration-300 shadow-sm bg-white ${theme === "dark" ? "translate-x-6" : "translate-x-0"} flex items-center justify-center`}>
+      <span
+        className={`block w-4 h-4 rounded-full transform transition-transform duration-300 shadow-sm bg-white ${theme === "dark" ? "translate-x-6" : "translate-x-0"} flex items-center justify-center`}
+      >
         <Sun className="h-3 w-3 text-amber-500 absolute transition-opacity duration-300 dark:opacity-0" />
         <Moon className="h-3 w-3 text-indigo-400 absolute transition-opacity duration-300 opacity-0 dark:opacity-100" />
       </span>

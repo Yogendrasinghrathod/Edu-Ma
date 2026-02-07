@@ -35,7 +35,7 @@ const Login = () => {
     password: "",
   });
   const [signupInput, setSignupInput] = useState({
-    name:"",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -112,11 +112,9 @@ const Login = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      console.log("🚀 Initiating Google Sign-In...");
       const data = await signInWithGoogle();
-      
+
       if (data && data.success) {
-        console.log("✅ Google Sign-In Successful. Dispatching to Redux...");
         dispatch(userLoggedIn({ user: data.user, token: data.token }));
         toast.success(data.message || "Logged in successfully!");
         navigate("/");
@@ -125,7 +123,9 @@ const Login = () => {
       } else {
         // This else block might not be necessary if signInWithGoogle throws errors, but it's good for safety.
         console.error("❌ Google Sign-In failed:", data?.message);
-        toast.error(data?.message || "Google Sign-In failed. Please try again.");
+        toast.error(
+          data?.message || "Google Sign-In failed. Please try again.",
+        );
       }
     } catch (error) {
       console.error("❌ An error occurred during Google Sign-In:", error);
@@ -134,14 +134,14 @@ const Login = () => {
   };
 
   return (
-    <div className="flex w-full justify-center items-center min-h-[calc(100vh-6rem)] bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 px-4 pt-24">
+    <div className="flex w-full justify-center items-center min-h-[calc(100vh-6rem)] bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-950 dark:to-gray-900 px-4 pt-24">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-black dark:text-white mb-2">
             Welcome to Edu-
             <span className="text-blue-600 dark:text-blue-400">Ma</span>
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-black dark:text-gray-400">
             Your journey to knowledge begins here
           </p>
         </div>
@@ -163,12 +163,12 @@ const Login = () => {
           </TabsList>
 
           <TabsContent value="login">
-            <Card className="border-none shadow-lg bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
+            <Card className="border-none shadow-lg bg-white dark:bg-gray-900 rounded-xl overflow-hidden border dark:border-gray-800">
               <CardHeader className="pb-2">
-                <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+                <CardTitle className="text-2xl font-bold text-center text-black dark:text-white">
                   Login
                 </CardTitle>
-                <CardDescription className="text-center text-gray-500 dark:text-gray-400">
+                <CardDescription className="text-center text-black dark:text-gray-400">
                   Access your learning journey
                 </CardDescription>
               </CardHeader>
@@ -176,7 +176,7 @@ const Login = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="login-email"
-                    className="text-gray-700 dark:text-gray-300 font-medium"
+                    className="text-black dark:text-gray-300 font-semibold"
                   >
                     Email
                   </Label>
@@ -272,7 +272,7 @@ const Login = () => {
                 </button>
 
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
-                  Don't have an account?
+                  Don&apos;t have an account?
                   <a
                     href="#"
                     className="text-blue-600 dark:text-blue-400 hover:underline ml-1"
@@ -285,7 +285,7 @@ const Login = () => {
           </TabsContent>
 
           <TabsContent value="signup">
-            <Card className="border-none shadow-lg bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
+            <Card className="border-none shadow-lg bg-white dark:bg-gray-900 rounded-xl overflow-hidden border dark:border-gray-800">
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">
                   Create an Account

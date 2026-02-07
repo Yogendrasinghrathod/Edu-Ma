@@ -1,22 +1,21 @@
 import { Skeleton } from "@/components/ui/skeleton";
- 
+
 import Course from "./Course";
 import { useGetPublishedCourseQuery } from "@/features/api/courseApi";
 
-
 const Courses = () => {
-  const{ data,isLoading,isError}=useGetPublishedCourseQuery();
-  if(isError){
-    <h1>Failed to Load Course</h1>
+  const { data, isLoading, isError } = useGetPublishedCourseQuery();
+  if (isError) {
+    <h1>Failed to Load Course</h1>;
   }
   // const isLoading = false;
   return (
-    <div className="dark:bg-black 0 py-16 ">
+    <div className="dark:bg-gray-950 py-16 ">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="font-bold text-4xl text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 text-black dark:text-gray-600">
+        <h2 className="font-bold text-4xl text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
           Our Courses
         </h2>
-        <p className="text-gray-600 text-center max-w-2xl mx-auto mb-12">
+        <p className="text-black dark:text-gray-400 text-center max-w-2xl mx-auto mb-12">
           Expand your knowledge with our expertly crafted learning experiences
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -24,7 +23,9 @@ const Courses = () => {
             ? Array.from({ length: 6 }).map((_, index) => (
                 <CourseSkeleton key={index} />
               ))
-            : data?.courses.map((course, index) => <Course key={index}  course={course} />)}
+            : data?.courses.map((course, index) => (
+                <Course key={index} course={course} />
+              ))}
         </div>
       </div>
     </div>

@@ -35,12 +35,14 @@ const LectureTab = () => {
   const params = useParams();
   const { lectureId, courseId } = params;
 
-  
+  const [editLecture, { data, isLoading, isSuccess, error: editError }] =
+    useEditLectureMutation();
+  const [
+    removeLecture,
+    { data: removeData, isLoading: removeLoading, isSuccess: removeSuccess },
+  ] = useRemoveLectureMutation();
 
-  const [editLecture, { data, isLoading, isSuccess, error: editError }] = useEditLectureMutation();
-  const [removeLecture, { data: removeData, isLoading: removeLoading, isSuccess: removeSuccess }] = useRemoveLectureMutation();
-
-  const { data:lectureData } = useGetLectureByIdQuery(lectureId);
+  const { data: lectureData } = useGetLectureByIdQuery(lectureId);
 
   const lecture = lectureData?.lecture;
   useEffect(() => {
@@ -63,16 +65,16 @@ const LectureTab = () => {
       try {
         const res = await axios.post(`${MEDIA_API}/upload-video`, formData, {
           onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total,
+            );
             setUploadProgress(percentCompleted);
-            
           },
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
         if (res.data.success) {
-          
           setUploadVideoInfo({
             videoUrl: res.data.data.url,
             publicId: res.data.data.public_id,
@@ -95,7 +97,11 @@ const LectureTab = () => {
       if (lectureTitle && lectureTitle.trim()) {
         payload.lectureTitle = lectureTitle.trim();
       }
-      if (uploadVideoInfo && uploadVideoInfo.videoUrl && uploadVideoInfo.publicId) {
+      if (
+        uploadVideoInfo &&
+        uploadVideoInfo.videoUrl &&
+        uploadVideoInfo.publicId
+      ) {
         payload.videoInfo = uploadVideoInfo;
       }
 
@@ -114,7 +120,7 @@ const LectureTab = () => {
       toast.success(data.message);
     }
     if (editError) {
-      toast.error(editError.data?.message || 'Update failed');
+      toast.error(editError.data?.message || "Update failed");
     }
   }, [isSuccess, data?.message, editError]);
 
@@ -130,11 +136,13 @@ const LectureTab = () => {
   }, [removeSuccess, navigate, removeData?.message, courseId]);
 
   return (
-    <Card className="dark:bg-gray-700">
+    <Card className="dark:bg-gray-900 dark:border-gray-800">
       <CardHeader className="flex justify-between ">
         <div>
-          <CardTitle className="text-center">Edit Lecture</CardTitle>
-          <CardDescription className="text-center my-2">
+          <CardTitle className="text-center text-black dark:text-gray-100">
+            Edit Lecture
+          </CardTitle>
+          <CardDescription className="text-center my-2 text-black dark:text-gray-400">
             Make changes and Then click Save
           </CardDescription>
           <div className="flex justify-end">
@@ -158,7 +166,9 @@ const LectureTab = () => {
 
         <CardContent>
           <div>
-            <Label className="font-bold">Title</Label>
+            <Label className="font-bold text-black dark:text-gray-200">
+              Title
+            </Label>
             <Input
               value={lectureTitle}
               onChange={(e) => {
@@ -166,17 +176,18 @@ const LectureTab = () => {
               }}
               type="text"
               placeholder="Ex. Introduction To JavaScript"
+              className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
             />
           </div>
           <div className="my-5">
-            <Label className="font-bold">
+            <Label className="font-bold text-black dark:text-gray-200">
               Video <span className="text-red-500">*</span>
             </Label>
             <Input
               type="file"
               onChange={fileChangeHandler}
               accept="video/*"
-              className="w-fit"
+              className="w-fit dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
             />
           </div>
           <div className="flex items-center space-x-2 my-5">
@@ -185,7 +196,12 @@ const LectureTab = () => {
               onCheckedChange={setIsFree}
               id="airplane-mode"
             />
-            <Label htmlFor="airplane-mode">Is This Video FREE?</Label>
+            <Label
+              htmlFor="airplane-mode"
+              className="text-black dark:text-gray-300"
+            >
+              Is This Video FREE?
+            </Label>
           </div>
           {mediaProgress && (
             <div className="my-4">

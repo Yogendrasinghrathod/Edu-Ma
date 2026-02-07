@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGetAllPurchasedCoursesQuery } from "@/features/api/purchaseApi";
-import React from "react";
 import {
   LineChart,
   Line,
@@ -12,49 +11,51 @@ import {
 } from "recharts";
 
 const Dashboard = () => {
-  const { data, isSuccess, isError, isLoading } =
-    useGetAllPurchasedCoursesQuery();
-    
+  const { data, isError, isLoading } = useGetAllPurchasedCoursesQuery();
+
   if (isLoading) return <h1>Loading ....</h1>;
   if (isError)
     return <h1 className="text-red-500">Failed to get purchased course</h1>;
-  console.log(data);
-  
+
   const { purchasedCourses } = data || [];
 
-  const courseData = (purchasedCourses).map((course) => ({
+  const courseData = purchasedCourses.map((course) => ({
     name: course.courseId.courseTitle,
     price: course.courseId.coursePrice,
   }));
 
-  const totalRevenue = (purchasedCourses).reduce(
+  const totalRevenue = purchasedCourses.reduce(
     (acc, element) => acc + (element.amount || 0),
-    0
+    0,
   );
 
-  const totalSales = (purchasedCourses).length;
+  const totalSales = purchasedCourses.length;
   return (
     <div className=" grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-      <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 dark:bg-gray-900 dark:border-gray-800">
         <CardHeader>
-          <CardTitle>Total Sales</CardTitle>
+          <CardTitle className="text-black dark:text-gray-100">
+            Total Sales
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-3xl font-bold text-blue-600">{totalSales}</p>
         </CardContent>
       </Card>
-      <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 dark:bg-gray-900 dark:border-gray-800">
         <CardHeader>
-          <CardTitle>Total Revenue</CardTitle>
+          <CardTitle className="text-black dark:text-gray-100">
+            Total Revenue
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-3xl font-bold text-blue-600">{totalRevenue}</p>
         </CardContent>
       </Card>
 
-      <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4">
+      <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 dark:bg-gray-900 dark:border-gray-800">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-700">
+          <CardTitle className="text-xl font-semibold text-black dark:text-gray-200">
             Course Prices
           </CardTitle>
         </CardHeader>

@@ -1,14 +1,20 @@
-import { cn } from "@/lib/utils"
+import PropTypes from "prop-types";
+import { cn } from "@/lib/utils";
 
-function Skeleton({
-  className,
-  ...props
-}) {
+function Skeleton({ className, ...props }) {
   return (
-    (<div
-      className={cn("animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800", className)}
-      {...props} />)
+    <div
+      className={cn(
+        "animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
-export { Skeleton }
+Skeleton.propTypes = {
+  className: PropTypes.string,
+};
+
+export { Skeleton };

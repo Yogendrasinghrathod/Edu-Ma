@@ -1,25 +1,29 @@
-import "./App.css";
+import { lazy, Suspense } from "react";
+
 // import {Button} from './components/ui/button'
-import Login from "./pages/login";
 import HeroSection from "./pages/student/HeroSection";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
 import Courses from "./pages/student/Courses";
-import MyLearning from "./pages/student/MyLearning";
-import Profile from "./pages/student/Profile";
-import Sidebar from "./pages/admin/Sidebar";
-import Dashboard from "./pages/admin/Dashboard";
-import CourseTable from "./pages/admin/course/CourseTable";
-import AddCourse from "./pages/admin/course/AddCourse";
-import EditCourse from "./pages/admin/course/EditCourse";
-import CreateLecture from "./pages/admin/lecture/CreateLecture";
-import EditLecture from "./pages/admin/lecture/EditLecture";
-import CourseDetail from "./pages/student/CourseDetail";
-import CourseProgress from "./pages/student/CourseProgress";
-import SearchPage from "./pages/student/SearchPage";
 import { AdminRoute, ProtectedRoute } from "./components/ProtectedRoute";
 import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
 // import { LogOut, Sidebar } from "lucide-react";
+
+// Lazy loading components
+const Login = lazy(() => import("./pages/login"));
+const MyLearning = lazy(() => import("./pages/student/MyLearning"));
+const Profile = lazy(() => import("./pages/student/Profile"));
+const SearchPage = lazy(() => import("./pages/student/SearchPage"));
+const CourseDetail = lazy(() => import("./pages/student/CourseDetail"));
+const CourseProgress = lazy(() => import("./pages/student/CourseProgress"));
+
+const Sidebar = lazy(() => import("./pages/admin/Sidebar"));
+const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
+const CourseTable = lazy(() => import("./pages/admin/course/CourseTable"));
+const AddCourse = lazy(() => import("./pages/admin/course/AddCourse"));
+const EditCourse = lazy(() => import("./pages/admin/course/EditCourse"));
+const CreateLecture = lazy(() => import("./pages/admin/lecture/CreateLecture"));
+const EditLecture = lazy(() => import("./pages/admin/lecture/EditLecture"));
 
 const appRouter = createBrowserRouter([
   {
@@ -39,10 +43,8 @@ const appRouter = createBrowserRouter([
         path: "/login",
         element: (
           // <AuthenticatedUser>
-            <Login />
+          <Login />
           // </AuthenticatedUser>
-            
-          
         ),
       },
       {
@@ -130,8 +132,9 @@ const appRouter = createBrowserRouter([
 function App() {
   return (
     <main>
-      {/* <Button >Lets start</Button> */}
-      <RouterProvider router={appRouter} />
+      <Suspense fallback={null}>
+        <RouterProvider router={appRouter} />
+      </Suspense>
     </main>
   );
 }

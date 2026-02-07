@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { userLoggedIn, userLoggedOut } from "../authSlice";
 import { API_BASE_URL } from "../../config/api";
 
-
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
@@ -16,15 +15,16 @@ export const authApi = createApi({
         method: "POST",
         body: inputData,
       }),
-      async onQueryStarted(_,{queryFulfilled,dispatch}){
-        try{
-          const result=await queryFulfilled;
-          dispatch(userLoggedIn({user:result.data.user, token:result.data.token}));
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userLoggedIn({ user: result.data.user, token: result.data.token }),
+          );
+        } catch {
+          // login failure handled via mutation state
         }
-        catch(error){
-          console.log(error);
-        }
-      }
+      },
     }),
     registerUser: builder.mutation({
       query: (inputData) => ({
@@ -32,7 +32,6 @@ export const authApi = createApi({
         method: "POST",
         body: inputData,
       }),
-      
     }),
 
     logoutUser: builder.mutation({
@@ -40,14 +39,13 @@ export const authApi = createApi({
         url: "/auth/logout",
         method: "POST",
       }),
-      async onQueryStarted(_,{dispatch}){
-        try{
+      async onQueryStarted(_, { dispatch }) {
+        try {
           dispatch(userLoggedOut());
+        } catch {
+          // logout failure handled via mutation state
         }
-        catch(error){
-          console.log(error);
-        }
-      }
+      },
     }),
 
     loadUser: builder.query({
@@ -55,19 +53,18 @@ export const authApi = createApi({
         url: "/profile",
         method: "GET",
       }),
-      async onQueryStarted(_,{queryFulfilled,dispatch}){
-        try{
-          const result=await queryFulfilled;
-          dispatch(userLoggedIn({user:result.data.user, token:result.data.token}));
-        }
-        catch(error){
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userLoggedIn({ user: result.data.user, token: result.data.token }),
+          );
+        } catch (error) {
           if (error?.error?.status === 401) {
             // unauthenticated; ignore
-          } else {
-            console.log("Auth error:", error);
           }
         }
-      }
+      },
     }),
 
     updateUser: builder.mutation({
@@ -75,20 +72,17 @@ export const authApi = createApi({
         url: "/profile/update",
         method: "PUT",
         body: formData,
-        headers:{},
-        credentials:"include"
+        headers: {},
+        credentials: "include",
       }),
-      
     }),
   }),
 });
-// console.log(authApi);
 
 export const {
   useLoginUserMutation,
   useRegisterUserMutation,
   useLoadUserQuery,
-  useUpdateUserMutation, 
+  useUpdateUserMutation,
   useLogoutUserMutation,
 } = authApi;
-// console.log(useRegisterMutation);

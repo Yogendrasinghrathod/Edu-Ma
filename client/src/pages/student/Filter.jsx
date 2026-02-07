@@ -10,7 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
 
 const categories = [
   { id: "nextjs", label: "Next JS" },
@@ -30,35 +31,30 @@ const Filter = ({ handleFilterChange }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortByPrice, setSortByPrice] = useState("");
 
-
   const handleCategoryChange = (categoryId) => {
-    // console.log(categoryId);
-    
     setSelectedCategories((prevCategories) => {
-      // console.log(prevCategories);
-      
       const newCategories = prevCategories.includes(categoryId)
         ? prevCategories.filter((id) => id !== categoryId)
         : [...prevCategories, categoryId];
 
-        // console.log(newCategories);
-        handleFilterChange(newCategories, sortByPrice);
-        return newCategories;
+      handleFilterChange(newCategories, sortByPrice);
+      return newCategories;
     });
   };
 
   const selectByPriceHandler = (selectedValue) => {
     setSortByPrice(selectedValue);
     handleFilterChange(selectedCategories, selectedValue);
-  }
+  };
 
-  
   return (
-    <div className="w-full md:w-[20%]">
+    <div className="w-full md:w-[20%] p-4 bg-white dark:bg-gray-900 rounded-lg border dark:border-gray-800">
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold text-lg md:text-xl">Filter Options</h1>
+        <h1 className="font-semibold text-lg md:text-xl text-black dark:text-gray-100">
+          Filter Options
+        </h1>
         <Select onValueChange={selectByPriceHandler}>
-          <SelectTrigger>
+          <SelectTrigger className="dark:bg-gray-800 dark:border-gray-700">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
@@ -72,15 +68,18 @@ const Filter = ({ handleFilterChange }) => {
       </div>
       <Separator className="my-4" />
       <div>
-        <h1 className="font-semibold mb-2  flex md:flex-row gap-4">CATEGORY</h1>
+        <h1 className="font-semibold mb-2 flex md:flex-row gap-4 text-black dark:text-gray-200">
+          CATEGORY
+        </h1>
         {categories.map((category) => (
           <div key={category.id} className="flex items-center space-x-2 my-2">
             <Checkbox
               id={category.id}
               // categories={category.id}
               onCheckedChange={() => handleCategoryChange(category.id)}
+              className="dark:border-gray-600"
             />
-            <Label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <Label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-black dark:text-gray-300">
               {category.label}
             </Label>
           </div>
@@ -88,6 +87,10 @@ const Filter = ({ handleFilterChange }) => {
       </div>
     </div>
   );
+};
+
+Filter.propTypes = {
+  handleFilterChange: PropTypes.func.isRequired,
 };
 
 export default Filter;

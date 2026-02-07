@@ -20,31 +20,32 @@ const AddCourse = () => {
   const [courseTitle, setCourseTitle] = useState("");
   const [category, setCategory] = useState("");
 
-  const [createCourse,{data,isError,isSuccess,isLoading}]=useCreateCourseMutation();
+  const [createCourse, { data, isError, isSuccess, isLoading }] =
+    useCreateCourseMutation();
   const navigate = useNavigate();
   // const isLoading = false;
   const getSelectedCategory = (value) => {
     setCategory(value);
   };
 
-
   const createCourseHandler = async () => {
-    await createCourse({courseTitle,category});
+    await createCourse({ courseTitle, category });
   };
-  useEffect(()=>{
-    if(isSuccess){
-      toast.success(data?.message || "course created successfully")
-      navigate("/admin/course")
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "course created successfully");
+      navigate("/admin/course");
     }
+  }, [isSuccess, isError, data?.message, navigate]);
 
-  },[isSuccess,isError,data?.message,navigate])
-
-  
   return (
     <div className="flex-1 mx-10">
       <div className="mb-4">
-        <h1 className="font-bold text-xl">Let&apos;s add course ,add some basic course details for your new course</h1>
-        <p className="text-sm">
+        <h1 className="font-bold text-xl text-black dark:text-gray-100">
+          Let&apos;s add course, add some basic course details for your new
+          course
+        </h1>
+        <p className="text-sm dark:text-gray-400">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi odit
           velit sequi, consequatur odio totam expedita. Itaque nisi et ipsa!
           Eveniet qui id incidunt suscipit, et nesciunt excepturi ad
@@ -53,20 +54,25 @@ const AddCourse = () => {
       </div>
       <div>
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="courseTitle">Title</Label>
+          <Label
+            htmlFor="courseTitle"
+            className="text-black dark:text-gray-200"
+          >
+            Title
+          </Label>
           <Input
             type="text"
             id="courseTitle"
             value={courseTitle}
             onChange={(e) => setCourseTitle(e.target.value)}
             placeholder="YOUR COURSE NAME"
-            className=""
+            className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
           />
         </div>
         <div>
-          <Label>Category</Label>
+          <Label className="text-black dark:text-gray-200">Category</Label>
           <Select onValueChange={getSelectedCategory}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
               <SelectValue placeholder="Select a Category" />
             </SelectTrigger>
             <SelectContent>
