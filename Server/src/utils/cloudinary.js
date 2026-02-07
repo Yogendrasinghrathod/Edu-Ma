@@ -10,18 +10,14 @@ cloudinary.config({
 });
 
 exports.uploadMedia = async (file) => {
-  // console.log("File received in uploadImageToCloudinary:", folder);
-
   try {
-    console.log("Cloudinary name:", process.env.CLOUDINARY_CLOUD_NAME);
-
     const uploadResponse = await cloudinary.uploader.upload(file, {
-      resource_type: "video",
+      resource_type: "auto", // Automatically detect image or video
     });
     return uploadResponse;
   } catch (error) {
     console.error("Cloudinary upload error:", error);
-    throw new Error("Failed to upload  to Cloudinary");
+    throw new Error("Failed to upload to Cloudinary");
   }
 };
 

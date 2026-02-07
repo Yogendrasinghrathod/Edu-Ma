@@ -8,6 +8,10 @@ The primary focus today was on **Systematic Prop Validation**, **CodeBase Hygien
   - Fixed issue where HLS videos worked on localhost but failed in production.
   - Forced `https://` for all Cloudinary HLS URLs in `client/src/utils/videoUtils.js` to prevent Mixed Content errors.
   - Robustified `convertToHlsUrl` to support multiple video extensions (`.mp4`, `.mov`, `.avi`, `.mkv`, `.webm`).
+- **Production 500 Error Fixes (Payments & Uploads)**:
+  - Resolved 500 Internal Server Error in `create-checkout-session` by correcting Razorpay environment variable mapping (`RAZORPAY_KEY_SECRET`).
+  - Fixed thumbnail upload failures by updating the Cloudinary utility to automatically detect resource types instead of forcing "video".
+  - Enhanced error logging for payment-related failures to aid future debugging.
 - **UI Component Optimization**: 
   - Added `PropTypes` to all components in `client/src/components/ui/` (Calendar, Dialog, Dropdown, Table, etc.).
   - Migrated UI components to modern `forwardRef` patterns.
