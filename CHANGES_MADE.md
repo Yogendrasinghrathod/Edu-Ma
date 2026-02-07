@@ -10,7 +10,10 @@ The primary focus today was on **Systematic Prop Validation**, **CodeBase Hygien
   - Robustified `convertToHlsUrl` to support multiple video extensions (`.mp4`, `.mov`, `.avi`, `.mkv`, `.webm`).
 - **Production 500 Error Fixes (Payments & Uploads)**:
   - Resolved 500 Internal Server Error in `create-checkout-session` by correcting Razorpay environment variable mapping (`RAZORPAY_KEY_SECRET`).
+  - Implemented robust price validation (check for price > 0, round to integer paise) in `coursePurchaseController.js`.
   - Fixed thumbnail upload failures by updating the Cloudinary utility to automatically detect resource types instead of forcing "video".
+  - Standardized Razorpay configuration using a central `config.js` and added support for `RAZORPAY_WEBHOOK_SECRET`.
+  - Fixed typos (`onsole.error`) in webhook logging.
   - Enhanced error logging for payment-related failures to aid future debugging.
 - **UI Component Optimization**: 
   - Added `PropTypes` to all components in `client/src/components/ui/` (Calendar, Dialog, Dropdown, Table, etc.).

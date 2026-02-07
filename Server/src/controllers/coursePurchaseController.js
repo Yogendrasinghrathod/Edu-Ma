@@ -6,9 +6,11 @@ const crypto = require("crypto");
 const User = require("../models/UserSchema");
 const Lecture = require("../models/lectureSchema");
 
+const config = require("../config/config");
+
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_id: config.RAZORPAY_KEY_ID,
+  key_secret: config.RAZORPAY_KEY_SECRET,
 });
 
 exports.createCheckoutSession = async (req, res) => {
@@ -21,7 +23,14 @@ exports.createCheckoutSession = async (req, res) => {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    const amountInPaise = course.coursePrice * 100;
+    if (!course.coursePrice || course.coursePrice <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid course price. Payment cannot be initiated.",
+      });
+    }
+
+    const amountInPaise = Math.round(course.coursePrice * 100);
 
     const order = await razorpay.orders.create({
       amount: amountInPaise,
@@ -49,7 +58,7 @@ exports.createCheckoutSession = async (req, res) => {
       amount: order.amount,
       currency: order.currency,
       courseTitle: course.courseTitle,
-      key: process.env.RAZORPAY_KEY_ID,
+      key: config.RAZORPAY_KEY_ID,
     });
   } catch (error) {
     console.error("Razorpay order creation error:", error);
@@ -65,11 +74,11 @@ exports.createCheckoutSession = async (req, res) => {
 // const mongoose = require("mongoose");
 
 exports.razorpayWebhook = async (req, res) => {
-  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  const secret = config.RAZORPAY_WEBHOOK_SECRET;
   const receivedSignature = req.headers["x-razorpay-signature"];
 
   if (!secret) {
-    onsole.error("❌ Webhook secret missing");
+    console.error("❌ Webhook secret missing");
     return res.status(500).send("Server config error");
   }
 
@@ -169,7 +178,7 @@ exports.verifyPayment = async (req, res) => {
     // Verify the payment signature
     const text = orderId + "|" + paymentId;
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .createHmac("sha256", config.RAZORPAY_KEY_SECRET)
       .update(text)
       .digest("hex");
 
