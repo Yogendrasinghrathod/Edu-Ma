@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("path");
 const app = express();
 // import { courseProgressRoute } from "./routes/courseProgressRoute.js";
 
@@ -53,21 +52,12 @@ app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/progress", courseProgressRoute);
 // quiz routes removed
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../../client/dist")));
-
-// Default API route
-app.get("/api/v1", (req, res) => {
+//default request
+app.get("/", (req, res) => {
   return res.json({
     success: true,
     message: "Your server is up and running...",
   });
-});
-
-// The "catchall" handler: for any request that doesn't
-// match one above, send back React's index.html file.
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
 });
 
 app.listen(PORT, () => {
