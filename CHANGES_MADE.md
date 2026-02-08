@@ -1,3 +1,41 @@
+# Changes Made - February 8, 2026
+
+## Objective Accomplished
+Today's focus was on **Navigation & Routing Fixes**, **Split Deployment Configuration**, and **UI Bug Fixes** to ensure seamless user experience across the platform.
+
+## Key Changes Summary
+
+### Navigation & State Management
+- **Purchase State Refresh Fix**:
+  - Fixed issue where navigating to `/course-progress/${courseId}` after payment didn't refresh the purchase state.
+  - Added RTK Query tags (`Course`, `PurchasedCourses`) to `client/src/features/api/purchaseApi.js`.
+  - Configured `getCourseDetailsWithStatus` to provide tags and `verifyPayment` to invalidate tags.
+  - Now the course content becomes accessible immediately after payment verification without manual reload.
+
+### Deployment Configuration (Split Architecture)
+- **Backend (Render)**:
+  - Reverted static file serving code in `Server/src/index.js` since frontend is hosted separately on Netlify.
+  - Removed unnecessary `path` and `fs` imports.
+  - Restored original API-only configuration for cleaner backend architecture.
+  
+- **Frontend (Netlify)**:
+  - Created `client/netlify.toml` configuration file for explicit SPA routing rules.
+  - Verified `client/public/_redirects` file is correctly configured with `/* /index.html 200`.
+  - Both configurations ensure proper handling of client-side routing and prevent 404 errors on page refresh.
+
+### UI Bug Fixes
+- **SVG Path Error Fix**:
+  - Fixed malformed SVG path in `client/src/pages/student/HeroSection.jsx`.
+  - Added missing `Q` (quadratic curve) command to the decorative wave path.
+  - Resolved console error: "Expected number" in SVG `d` attribute.
+
+## Quality Assurance
+- **State Management**: Verified RTK Query cache invalidation triggers proper re-fetching.
+- **Deployment**: Confirmed `_redirects` file is copied to `dist/` during build.
+- **SPA Routing**: Configured both `_redirects` and `netlify.toml` for robust client-side routing.
+
+---
+
 # Changes Made - February 7, 2026
 
 ## Objective Accomplished
