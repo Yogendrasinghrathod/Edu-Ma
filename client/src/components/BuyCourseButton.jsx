@@ -17,7 +17,7 @@ const BuyCourseButton = ({ courseId }) => {
 
   const [verifyPayment, { isLoading: isVerifying }] =
     useVerifyPaymentMutation();
-  const navigate = useNavigate();
+   const navigate = useNavigate();
 
   const purchaseCourseHandler = async () => {
     await createCheckoutSession(courseId);

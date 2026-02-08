@@ -3,7 +3,7 @@ import { PURCHASE_API } from "../../config/api";
 
 export const purchaseApi = createApi({
   reducerPath: "purchaseApi",
-  tagTypes: ["PurchasedCourses"],
+  tagTypes: ["PurchasedCourses", "Course"],
   baseQuery: fetchBaseQuery({
     baseUrl: PURCHASE_API,
     credentials: "include",
@@ -22,6 +22,7 @@ export const purchaseApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["PurchasedCourses", "Course"],
     }),
     checkEnrollmentStatus: builder.query({
       query: (courseId) => ({
@@ -34,6 +35,9 @@ export const purchaseApi = createApi({
         url: `/course/${courseId}/detail-with-status`,
         method: "GET",
       }),
+      providesTags: (result, error, courseId) => [
+        { type: "Course", id: courseId },
+      ],
     }),
     getAllPurchasedCourses: builder.query({
       query: () => ({
