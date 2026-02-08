@@ -1,4 +1,6 @@
 import { useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Button } from "./ui/button";
 import {
   useCreateCheckoutSessionMutation,
@@ -15,6 +17,7 @@ const BuyCourseButton = ({ courseId }) => {
 
   const [verifyPayment, { isLoading: isVerifying }] =
     useVerifyPaymentMutation();
+  const navigate = useNavigate();
 
   const purchaseCourseHandler = async () => {
     await createCheckoutSession(courseId);
@@ -30,8 +33,8 @@ const BuyCourseButton = ({ courseId }) => {
         };
         await verifyPayment(verificationData);
         toast.success("Payment successful ✅");
-        // Optionally redirect or refresh the page
-        window.location.reload();
+        // Redirect to course progress page
+        navigate(`/course-progress/${courseId}`);
       } catch (_error) {
         toast.error(
           "Payment verification failed. Please contact support.",
@@ -39,7 +42,7 @@ const BuyCourseButton = ({ courseId }) => {
         );
       }
     },
-    [verifyPayment],
+    [verifyPayment, courseId, navigate],
   );
 
   useEffect(() => {
