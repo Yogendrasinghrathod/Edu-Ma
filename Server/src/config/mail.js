@@ -1,4 +1,5 @@
-import 'dotenv/config';
+// mail.js
+require('dotenv').config();
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
 const mailerSend = new MailerSend({
