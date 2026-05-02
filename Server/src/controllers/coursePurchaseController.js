@@ -7,6 +7,7 @@ const User = require("../models/UserSchema");
 const Lecture = require("../models/lectureSchema");
 
 const config = require("../config/config");
+const sendEmail = require("../../../../otp_generation/server/src/config/mail");
 
 // Razorpay instance will be created inside the function to ensure config is loaded
 let razorpay;
@@ -157,8 +158,8 @@ exports.razorpayWebhook = async (req, res) => {
   } catch (error) {
     return res.status(400).json({ message: "Invalid webhook body" });
   }
-  console.log("This is payement event :> ",event);
-  
+  console.log("This is payement event :> ", event);
+
   if (event.event === "payment.captured") {
     const payment = event.payload.payment.entity;
 
@@ -172,6 +173,7 @@ exports.razorpayWebhook = async (req, res) => {
       }
 
       purchase.status = "completed";
+
       purchase.amount = payment.amount / 100;
 
       // if (purchase.courseId && purchase.courseId.lectures.length > 0) {
@@ -246,11 +248,13 @@ exports.verifyPayment = async (req, res) => {
       });
     }
 
+    const courseName = purchase.courseId.courseTitle;
+    const price = purchase.courseId.coursePrice;
     // Update purchase status
 
     purchase.status = "completed";
     await purchase.save();
-
+    
     const updatedUser = await User.findByIdAndUpdate(
       purchase.userId,
       { $addToSet: { enrolledCourses: purchase.courseId._id } },
@@ -286,7 +290,7 @@ exports.verifyPayment = async (req, res) => {
         { new: true },
       );
     }
-
+    await sendEmail( updatedUser.email,price,courseName);
     res.status(200).json({
       success: true,
       message: "Payment verified successfully",
@@ -388,7 +392,11 @@ exports.getCourseDetailsWithPurchaseStatus = async (req, res) => {
       .populate({ path: "creator" })
       .populate({ path: "lectures" });
 
-    const purchased = await PurchaseCourse.findOne({ userId, courseId, status: "completed" });
+    const purchased = await PurchaseCourse.findOne({
+      userId,
+      courseId,
+      status: "completed",
+    });
 
     if (!course) {
       return res.status(404).json({
@@ -404,7 +412,7 @@ exports.getCourseDetailsWithPurchaseStatus = async (req, res) => {
     return res.status(200).json({
       success: true,
       course,
-      purchased: !!purchased || isCreator
+      purchased: !!purchased || isCreator,
     });
   } catch (error) {
     return res.status(500).json({
