@@ -388,7 +388,7 @@ exports.getCourseDetailsWithPurchaseStatus = async (req, res) => {
       .populate({ path: "creator" })
       .populate({ path: "lectures" });
 
-    const purchased = await PurchaseCourse.findOne({ userId, courseId });
+    const purchased = await PurchaseCourse.findOne({ userId, courseId, status: "completed" });
 
     if (!course) {
       return res.status(404).json({
@@ -404,7 +404,7 @@ exports.getCourseDetailsWithPurchaseStatus = async (req, res) => {
     return res.status(200).json({
       success: true,
       course,
-      purchased: purchased || isCreator ? true : false,
+      purchased: !!purchased || isCreator
     });
   } catch (error) {
     return res.status(500).json({
