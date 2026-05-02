@@ -12,7 +12,7 @@ const config = require("../config/config");
 let razorpay;
 const getRazorpayInstance = () => {
   if (!config.RAZORPAY_KEY_ID || !config.RAZORPAY_KEY_SECRET) {
-    console.error("❌ Razorpay API keys are missing in config");
+    console.error(" Razorpay API keys are missing in config");
     return null;
   }
   if (!razorpay) {
@@ -157,7 +157,8 @@ exports.razorpayWebhook = async (req, res) => {
   } catch (error) {
     return res.status(400).json({ message: "Invalid webhook body" });
   }
-
+  console.log("This is payement event :> ",event);
+  
   if (event.event === "payment.captured") {
     const payment = event.payload.payment.entity;
 
