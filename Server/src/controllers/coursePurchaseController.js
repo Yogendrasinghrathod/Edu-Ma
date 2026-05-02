@@ -7,7 +7,7 @@ const User = require("../models/UserSchema");
 const Lecture = require("../models/lectureSchema");
 
 const config = require("../config/config");
-const { sendEmail } = require("../config/mail");
+const sendEmail = require("../config/mail");
 
 
 // Razorpay instance will be created inside the function to ensure config is loaded

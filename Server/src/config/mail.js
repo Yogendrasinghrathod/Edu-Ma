@@ -1,12 +1,12 @@
-// mail.js
 require('dotenv').config();
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+
+const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 
 const mailerSend = new MailerSend({
   apiKey: process.env.API_KEY,
 });
 
-export const sendEmail = async (email,price,courseName) => {
+const sendEmail = async (email, price, courseName) => {
   const sentFrom = new Sender("rathodyogi15026026@gmail.com", "Yogendra's");
 
   const recipients = [
@@ -17,9 +17,9 @@ export const sendEmail = async (email,price,courseName) => {
     .setFrom(sentFrom)
     .setTo(recipients)
     .setReplyTo(sentFrom)
-    .setSubject("Your Payement is Receieved")
-    .setHtml(`<strong> Your Payement is Receieved ${price} for ${courseName}</strong>`)
-    .setText(`<strong> Your Payement is Receieved ${price} for ${courseName}</strong>`);
+    .setSubject("Your Payment is Received")
+    .setHtml(`<strong>Your Payment is Received ₹${price} for ${courseName}</strong>`)
+    .setText(`Your Payment is Received ₹${price} for ${courseName}`);
 
   try {
     await mailerSend.email.send(emailParams);
@@ -29,5 +29,4 @@ export const sendEmail = async (email,price,courseName) => {
   }
 };
 
-
-// module.exports = sendEmail;
+module.exports = sendEmail;
