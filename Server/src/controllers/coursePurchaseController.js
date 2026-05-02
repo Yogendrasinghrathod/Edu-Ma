@@ -7,7 +7,8 @@ const User = require("../models/UserSchema");
 const Lecture = require("../models/lectureSchema");
 
 const config = require("../config/config");
-const sendEmail = require("../../../../otp_generation/server/src/config/mail");
+const { sendEmail } = require("../config/mail");
+
 
 // Razorpay instance will be created inside the function to ensure config is loaded
 let razorpay;
@@ -142,7 +143,7 @@ exports.razorpayWebhook = async (req, res) => {
     return res.status(400).json({ message: "Invalid signature" });
   }
 
-  console.log("✅ Webhook signature verified successfully");
+  // console.log("✅ Webhook signature verified successfully");
 
   let event;
   try {
@@ -158,7 +159,7 @@ exports.razorpayWebhook = async (req, res) => {
   } catch (error) {
     return res.status(400).json({ message: "Invalid webhook body" });
   }
-  console.log("This is payement event :> ", event);
+  // console.log("This is payement event :> ", event);
 
   if (event.event === "payment.captured") {
     const payment = event.payload.payment.entity;

@@ -5,7 +5,7 @@ const mailerSend = new MailerSend({
   apiKey: process.env.API_KEY,
 });
 
-const sendEmail = async (email,price,courseName) => {
+export const sendEmail = async (email,price,courseName) => {
   const sentFrom = new Sender("rathodyogi15026026@gmail.com", "Yogendra's");
 
   const recipients = [
@@ -29,4 +29,4 @@ const sendEmail = async (email,price,courseName) => {
 };
 
 
-module.exports = sendEmail;
+// module.exports = sendEmail;
